@@ -1,0 +1,40 @@
+@import "tailwindcss";
+
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: 'Poppins', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f5f9;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #FA8128;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #FA8128;
+}
+
+::selection {
+  background-color: #FA8128;
+  color: white;
+}
+
+/* All buttons should have pointer cursor */
+button,
+a,
+[role="button"] {
+  cursor: pointer;
+}
