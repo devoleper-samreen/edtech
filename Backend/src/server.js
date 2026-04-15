@@ -14,8 +14,6 @@ connectDB();
 
 // Middleware
 const allowedOrigins = [
-  'http://localhost:5173',
-  'https://ed-tech1.vercel.app',
   process.env.CLIENT_URL?.replace(/\/$/, '')
 ].filter(Boolean);
 
