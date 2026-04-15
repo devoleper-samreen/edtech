@@ -13,6 +13,7 @@ import {
   GraduationCap,
   Calendar,
   Quote,
+  Trophy,
   X,
 } from "lucide-react";
 
@@ -29,6 +30,7 @@ const navItems = [
   { name: "Enrollments", path: "/admin/enrollments", icon: GraduationCap },
   { name: "Callbacks", path: "/admin/callbacks", icon: PhoneCall },
   { name: "Testimonials", path: "/admin/testimonials", icon: Quote },
+  { name: "Placements", path: "/admin/placements", icon: Trophy },
   { name: "Users", path: "/admin/users", icon: Users },
   { name: "Admins", path: "/admin/admins", icon: ShieldCheck },
   { name: "Enquiries", path: "/admin/enquiries", icon: MessageSquare },

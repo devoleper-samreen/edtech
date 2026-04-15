@@ -3,11 +3,9 @@ import Header from "../components/Header";
 import Footer from "../components/Footer";
 import CallbackModal from "../components/CallbackModal";
 import HiringPartners from "../components/HiringPartners";
-import { ChevronLeft, ChevronRight } from "lucide-react";
-import { useRef, useState, useEffect } from "react";
+import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import toast from "react-hot-toast";
-import { testimonialService } from "../services/testimonialService";
 // @ts-ignore
 import { callbackService } from "../services/callbackService";
 
@@ -36,10 +34,7 @@ function HireFromUs() {
     { title: "Database & Analytics", color: "#14b8a6" },
   ];
 
-  const sliderRef = useRef<HTMLDivElement>(null);
   const [selectedTestimonial, setSelectedTestimonial] = useState<Testimonial | null>(null);
-  const [testimonials, setTestimonials] = useState<Testimonial[]>([]);
-  const [testimonialsLoading, setTestimonialsLoading] = useState(true);
 
   // Form state
   const [formData, setFormData] = useState({
@@ -52,21 +47,6 @@ function HireFromUs() {
   const [formLoading, setFormLoading] = useState(false);
   const [phoneError, setPhoneError] = useState("");
 
-  useEffect(() => {
-    fetchTestimonials();
-  }, []);
-
-  const fetchTestimonials = async () => {
-    setTestimonialsLoading(true);
-    try {
-      const response = await testimonialService.getActiveTestimonials();
-      setTestimonials(response.data || []);
-    } catch (error) {
-      console.error("Error fetching testimonials:", error);
-    } finally {
-      setTestimonialsLoading(false);
-    }
-  };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -125,13 +105,6 @@ function HireFromUs() {
     }
   };
 
-  const scrollLeft = () => {
-    sliderRef.current?.scrollBy({ left: -350, behavior: "smooth" });
-  };
-
-  const scrollRight = () => {
-    sliderRef.current?.scrollBy({ left: 350, behavior: "smooth" });
-  };
 
   return (
     <div>
@@ -187,17 +160,17 @@ function HireFromUs() {
                 <div className="flex flex-wrap gap-4 text-sm text-gray-600">
                   <div className="flex items-center gap-2">
                     <User size={16} className="text-teal-600" />
-                    <span>Mr. Sagar</span>
+                    <span>Mr. Dileep</span>
                   </div>
 
                   <div className="flex items-center gap-2">
                     <Phone size={16} className="text-green-600" />
-                    <span>+91 97424 90958</span>
+                    <span>+91 73491 41410</span>
                   </div>
 
                   <div className="flex items-center gap-2">
                     <Mail size={16} className="text-blue-600" />
-                    <span>sagar@macrosolutions.com</span>
+                    <span>dileepkumar914491@gmail.com</span>
                   </div>
                 </div>
               </motion.div>
@@ -338,88 +311,6 @@ function HireFromUs() {
         </div>
       </section>
 
-      {/* Testimonials Section */}
-      <section className="w-full py-16 bg-white">
-        <h2 className="text-3xl md:text-4xl font-bold text-center text-gray-800 mb-12">
-          Client Testimonials
-        </h2>
-
-        <div className="relative w-full max-w-[1100px] mx-auto px-6">
-          {testimonialsLoading ? (
-            <div className="flex flex-col items-center justify-center py-12">
-              <div className="w-10 h-10 border-4 border-[#FA8128] border-t-transparent rounded-full animate-spin"></div>
-              <p className="mt-3 text-gray-500 text-sm">Loading testimonials...</p>
-            </div>
-          ) : testimonials.length === 0 ? (
-            <div className="flex flex-col items-center justify-center py-12 text-center">
-              <Quote size={48} className="text-gray-300 mb-3" />
-              <p className="text-gray-500 text-sm">No testimonials available at the moment.</p>
-            </div>
-          ) : (
-            <>
-              {/* Left Arrow */}
-              <button
-                onClick={scrollLeft}
-                className="absolute -left-2 md:left-0 top-1/2 -translate-y-1/2 bg-white shadow-lg border border-gray-200 p-2 rounded-full z-10 hover:bg-gray-50 transition-colors"
-              >
-                <ChevronLeft className="text-gray-600" size={20} />
-              </button>
-
-              {/* Slider */}
-              <div
-                ref={sliderRef}
-                className="flex gap-6 overflow-x-auto scrollbar-hide px-8 py-4 scroll-smooth"
-                style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
-              >
-                {testimonials.map((item) => (
-                  <div
-                    key={item._id}
-                    className="min-w-[280px] max-w-[280px] bg-white rounded-2xl rounded-tl-none shadow-md border border-gray-100 p-5"
-                  >
-                    <h3 className="text-base font-bold text-gray-800 mb-3 leading-tight">
-                      {item.company}
-                    </h3>
-
-                    <div className="flex items-center gap-0.5 mb-2">
-                      {[...Array(5)].map((_, i) => (
-                        <Star
-                          key={i}
-                          size={12}
-                          className={i < item.rating ? 'text-amber-400 fill-amber-400' : 'text-gray-200'}
-                        />
-                      ))}
-                    </div>
-
-                    <div className="flex items-start gap-2">
-                      <span className="text-[#FA8128] text-2xl font-serif leading-none">
-                        "
-                      </span>
-                      <p className="text-gray-600 text-sm leading-relaxed">
-                        {item.shortText}
-                      </p>
-                    </div>
-
-                    <button
-                      onClick={() => setSelectedTestimonial(item)}
-                      className="mt-4 bg-[#FA8128] hover:bg-[#FA8128] text-white text-xs px-4 py-1.5 rounded-md transition-colors"
-                    >
-                      View More
-                    </button>
-                  </div>
-                ))}
-              </div>
-
-              {/* Right Arrow */}
-              <button
-                onClick={scrollRight}
-                className="absolute -right-2 md:right-0 top-1/2 -translate-y-1/2 bg-white shadow-lg border border-gray-200 p-2 rounded-full z-10 hover:bg-gray-50 transition-colors"
-              >
-                <ChevronRight className="text-gray-600" size={20} />
-              </button>
-            </>
-          )}
-        </div>
-      </section>
 
       <Footer />
       <CallbackModal />

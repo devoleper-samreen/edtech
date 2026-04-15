@@ -44,6 +44,8 @@ import enrollmentRoutes from './routes/enrollmentRoutes.js';
 import batchRoutes from './routes/batchRoutes.js';
 import testimonialRoutes from './routes/testimonialRoutes.js';
 import studentRoutes from './routes/studentRoutes.js';
+import placementRoutes from './routes/placementRoutes.js';
+import siteSettingsRoutes from './routes/siteSettingsRoutes.js';
 
 // API Routes
 app.get('/', (req, res) => {
@@ -77,6 +79,8 @@ app.use('/api/enrollments', enrollmentRoutes);
 app.use('/api/batches', batchRoutes);
 app.use('/api/testimonials', testimonialRoutes);
 app.use('/api/student', studentRoutes);
+app.use('/api/placements', placementRoutes);
+app.use('/api/settings', siteSettingsRoutes);
 
 // Error handling middleware
 app.use((err, req, res, next) => {

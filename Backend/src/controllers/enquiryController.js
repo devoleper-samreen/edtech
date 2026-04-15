@@ -1,5 +1,6 @@
 import Enquiry from '../models/Enquiry.js';
 import asyncHandler from '../utils/asyncHandler.js';
+import { sendEnquiryEmail } from '../utils/emailService.js';
 
 // @desc    Get all enquiries
 // @route   GET /api/enquiries
@@ -86,6 +87,11 @@ export const createEnquiry = asyncHandler(async (req, res) => {
     course,
     message
   });
+
+  // Notify admin (non-blocking)
+  sendEnquiryEmail({ name, email, phone, course, message })
+    .then(() => console.error('[ENQUIRY] Email sent successfully'))
+    .catch(err => console.error('[ENQUIRY] Email failed:', err.message));
 
   res.status(201).json({
     success: true,

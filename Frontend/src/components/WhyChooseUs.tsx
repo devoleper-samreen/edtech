@@ -40,7 +40,7 @@ const sections = [
   },
   {
     title: "Industry-Relevant Training",
-    image: "/techfox_transparent2.png",
+    image: "/texfox_transparent.png",
     imageAlt: "Industry-Relevant Training",
     imageLeft: false,
     mascot: true,

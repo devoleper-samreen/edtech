@@ -25,6 +25,7 @@ import Users from "./admin/pages/Users";
 import Admins from "./admin/pages/Admins";
 import Batches from "./admin/pages/Batches";
 import Testimonials from "./admin/pages/Testimonials";
+import Placements from "./admin/pages/Placements";
 
 // Student Imports
 import StudentLayout from "./student/components/StudentLayout";
@@ -91,6 +92,7 @@ function App() {
           <Route path="enquiries" element={<Enquiries />} />
           <Route path="callbacks" element={<CallbackRequests />} />
           <Route path="testimonials" element={<Testimonials />} />
+          <Route path="placements" element={<Placements />} />
           <Route path="users" element={<Users />} />
           <Route path="admins" element={<Admins />} />
         </Route>

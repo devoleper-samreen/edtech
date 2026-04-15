@@ -1,7 +1,7 @@
 import { useParams } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { Star, CheckCircle, Play, Facebook, Instagram, Calendar } from "lucide-react";
+import { Star, CheckCircle, Instagram, Calendar, Linkedin } from "lucide-react";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
 import CallbackModal from "../components/CallbackModal";
@@ -11,6 +11,8 @@ import FAQ from "../components/FAQ";
 // @ts-ignore
 import { courseService } from "../services/courseService";
 import { batchService } from "../services/batchService";
+// @ts-ignore
+import { placementService } from "../services/placementService";
 
 interface BatchData {
   _id: string;
@@ -34,20 +36,6 @@ const XIcon = () => (
   </svg>
 );
 
-const GoogleIcon = () => (
-  <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
-    <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
-    <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
-    <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/>
-    <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
-  </svg>
-);
-
-const YoutubeIcon = () => (
-  <svg width="14" height="14" viewBox="0 0 24 24" fill="#FF0000">
-    <path d="M19.615 3.184c-3.604-.246-11.631-.245-15.23 0-3.897.266-4.356 2.62-4.385 8.816.029 6.185.484 8.549 4.385 8.816 3.6.245 11.626.246 15.23 0 3.897-.266 4.356-2.62 4.385-8.816-.029-6.185-.484-8.549-4.385-8.816zm-10.615 12.816v-8l8 3.993-8 4.007z"/>
-  </svg>
-);
 
 interface CourseData {
   _id: string;
@@ -66,15 +54,6 @@ interface CourseData {
   };
 }
 
-// Placement data
-const placements = [
-  { name: "Akshata Kasar", degree: "btech", score: "73.15", year: "2025", dept: "computer science" },
-  { name: "Shaik Yaseen", degree: "be", score: "83.20", year: "2025", dept: "computer science" },
-  { name: "Rasika Baviskar", degree: "", score: "0.00", year: "2025", dept: "N/A" },
-  { name: "Pallavi Sharma", degree: "btech", score: "76.00", year: "2025", dept: "information technology" },
-  { name: "Mirza Altamash Baig", degree: "bca", score: "87.12", year: "2025", dept: "computer science" },
-  { name: "Mayuresh Avhad", degree: "be", score: "72.96", year: "2025", dept: "electronics and teleco..." },
-];
 
 // Default content for courses
 const defaultHighlights = [
@@ -106,6 +85,8 @@ function CourseDetails() {
   const [isEnrollOpen, setIsEnrollOpen] = useState(false);
   const [course, setCourse] = useState<CourseData | null>(null);
   const [batches, setBatches] = useState<BatchData[]>([]);
+  const [placements, setPlacements] = useState<any[]>([]);
+  const [showPlacements, setShowPlacements] = useState(true);
   const [loading, setLoading] = useState(true);
   const [batchesLoading, setBatchesLoading] = useState(true);
 
@@ -114,7 +95,21 @@ function CourseDetails() {
       fetchCourse();
       fetchBatches();
     }
+    fetchPlacements();
   }, [id]);
+
+  const fetchPlacements = async () => {
+    try {
+      const [placementsRes, visibilityRes] = await Promise.all([
+        placementService.getActivePlacements(6),
+        placementService.getPlacementsVisibility()
+      ]);
+      setPlacements(placementsRes.data || []);
+      setShowPlacements(visibilityRes.data !== false);
+    } catch (error) {
+      console.error("Error fetching placements:", error);
+    }
+  };
 
   const fetchCourse = async () => {
     setLoading(true);
@@ -218,24 +213,6 @@ function CourseDetails() {
                 {courseDescription}
               </p>
 
-              {/* Stats */}
-              <div className="flex flex-wrap gap-8 mb-6">
-                {[
-                  { value: "100,000+", label: "Students placed" },
-                  { value: "2,500+", label: "Hiring Companies" },
-                  { value: "50,000+", label: "Non IT Students placed" }
-                ].map((stat, index) => (
-                  <motion.div
-                    key={index}
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.4, delay: 0.2 + index * 0.1 }}
-                  >
-                    <p className="text-2xl font-bold text-[#FA8128]">{stat.value}</p>
-                    <p className="text-gray-500 text-sm">{stat.label}</p>
-                  </motion.div>
-                ))}
-              </div>
 
               {/* Highlights */}
               <div className="space-y-3 mb-6">
@@ -362,6 +339,7 @@ function CourseDetails() {
       <HiringPartners />
 
       {/* Our Placements Section */}
+      {showPlacements &&
       <section className="max-w-[1280px] mx-auto w-full py-12 bg-white">
         <div className="w-full max-w-[1100px] mx-auto px-6">
           <motion.h2
@@ -402,24 +380,25 @@ function CourseDetails() {
                     </div>
 
                     {/* Social Icons */}
-                    <div className="flex items-center gap-2 mt-3">
-                      <a href="#" className="text-orange-600 hover:opacity-80"><Facebook size={16} /></a>
-                      <a href="#" className="text-gray-800 hover:opacity-80"><XIcon /></a>
-                      <a href="#" className="text-pink-500 hover:opacity-80"><Instagram size={16} /></a>
-                      <a href="#" className="hover:opacity-80"><GoogleIcon /></a>
-                      <a href="#" className="hover:opacity-80"><YoutubeIcon /></a>
-                    </div>
+                    {(student.xLink || student.linkedinLink || student.instagramLink) && (
+                      <div className="flex items-center gap-2 mt-3">
+                        {student.xLink && (
+                          <a href={student.xLink} target="_blank" rel="noopener noreferrer" className="text-gray-800 hover:opacity-80"><XIcon /></a>
+                        )}
+                        {student.linkedinLink && (
+                          <a href={student.linkedinLink} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:opacity-80"><Linkedin size={16} /></a>
+                        )}
+                        {student.instagramLink && (
+                          <a href={student.instagramLink} target="_blank" rel="noopener noreferrer" className="text-pink-500 hover:opacity-80"><Instagram size={16} /></a>
+                        )}
+                      </div>
+                    )}
                   </div>
 
-                  {/* Congratulations Card & Video */}
-                  <div className="w-[100px] space-y-2">
+                  {/* Congratulations Card */}
+                  <div className="w-[100px]">
                     <div className="w-full h-[60px] bg-gradient-to-br from-amber-100 to-amber-50 rounded-lg flex items-center justify-center">
                       <span className="text-amber-600 text-xs font-medium">Congrats!</span>
-                    </div>
-                    <div className="w-full h-[60px] bg-gray-100 rounded-lg flex items-center justify-center relative">
-                      <div className="w-8 h-8 bg-white/80 rounded-full flex items-center justify-center">
-                        <Play size={14} className="text-gray-600 ml-0.5" />
-                      </div>
                     </div>
                   </div>
                 </div>
@@ -438,7 +417,7 @@ function CourseDetails() {
             </motion.button>
           </div>
         </div>
-      </section>
+      </section>}
 
       {/* Highlights about the Course */}
       <section className="w-full py-12 bg-gray-50">

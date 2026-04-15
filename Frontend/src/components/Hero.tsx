@@ -86,15 +86,15 @@ function Hero() {
 
           {/* Right Image */}
           <motion.div
-            className="flex-1 flex justify-center lg:justify-start w-full lg:-ml-20"
+            className="flex-1 flex justify-center lg:justify-end w-full"
             initial={{ opacity: 0, x: 50 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.6, delay: 0.2 }}
           >
             <img
-              src="/texfox_transparent.png"
+              src="/techfox_transparent2.png"
               alt="Software Training Mind Map"
-              className="w-full max-w-[300px] sm:max-w-md md:max-w-lg lg:max-w-xl xl:max-w-2xl object-contain"
+              className="w-full h-auto object-contain"
             />
           </motion.div>
         </div>

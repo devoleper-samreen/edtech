@@ -1,5 +1,8 @@
+import { useState } from "react";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
+// @ts-ignore
+import api from "../config/api";
 
 const softSkillModules = [
   {
@@ -166,6 +169,41 @@ const outcomes = [
 ];
 
 function CRTProgram() {
+  const [formData, setFormData] = useState({
+    collegeName: "",
+    contactPerson: "",
+    phone: "",
+    email: "",
+    message: "",
+  });
+  const [submitting, setSubmitting] = useState(false);
+  const [submitted, setSubmitted] = useState(false);
+  const [error, setError] = useState("");
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setSubmitting(true);
+    setError("");
+    try {
+      await api.post("/enquiries", {
+        name: formData.collegeName,
+        email: formData.email,
+        phone: formData.phone,
+        course: "CRT Program - College Inquiry",
+        message: `Contact Person: ${formData.contactPerson}\n\n${formData.message}`,
+      });
+      setSubmitted(true);
+      setTimeout(() => {
+        setSubmitted(false);
+        setFormData({ collegeName: "", contactPerson: "", phone: "", email: "", message: "" });
+      }, 2000);
+    } catch {
+      setError("Something went wrong. Please try again.");
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
   return (
     <>
       <Header />
@@ -176,31 +214,115 @@ function CRTProgram() {
           <div className="absolute top-0 right-0 w-96 h-96 bg-[#FA8128] opacity-5 rounded-full -translate-y-1/2 translate-x-1/2" />
           <div className="absolute bottom-0 left-0 w-64 h-64 bg-[#FA8128] opacity-5 rounded-full translate-y-1/2 -translate-x-1/2" />
         </div>
-        <div className="max-w-[1100px] mx-auto px-4 sm:px-6 py-16 sm:py-20 md:py-24 relative z-10">
-          <p className="text-[#FA8128] text-xs sm:text-sm font-semibold tracking-widest uppercase mb-4">
-            Campus Recruitment Training
-          </p>
-          <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-gray-800 leading-tight mb-6 max-w-2xl">
-            Turning Students Into{" "}
-            <span className="text-[#FA8128]">Job-Ready Professionals</span>
-          </h1>
-          <p className="text-gray-600 text-base sm:text-lg leading-relaxed max-w-2xl mb-10">
-            We partner with colleges to deliver structured, results-driven CRT
-            programs that bridge the gap between academics and industry
-            expectations — right on your campus.
-          </p>
-          <div className="flex flex-wrap gap-10">
-            <div>
-              <p className="text-3xl sm:text-4xl font-bold text-gray-800">
-                95%<span className="text-[#FA8128]">+</span>
+        <div className="max-w-[1280px] mx-auto px-6 sm:px-10 py-8 sm:py-12 relative z-10">
+          <div className="flex flex-col lg:flex-row items-start gap-12">
+            {/* Left: Content */}
+            <div className="flex-1">
+              <p className="text-[#FA8128] text-xs sm:text-sm font-semibold tracking-widest uppercase mb-4">
+                Campus Recruitment Training
               </p>
-              <p className="text-gray-500 text-sm mt-1">Placement Improvement</p>
+              <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-gray-800 leading-tight mb-6">
+                Turning Students Into{" "}
+                <span className="text-[#FA8128]">Job-Ready Professionals</span>
+              </h1>
+              <p className="text-gray-600 text-base sm:text-lg leading-relaxed mb-10">
+                We partner with colleges to deliver structured, results-driven CRT
+                programs that bridge the gap between academics and industry
+                expectations — right on your campus.
+              </p>
+              <div className="flex flex-wrap gap-10">
+                <div>
+                  <p className="text-3xl sm:text-4xl font-bold text-gray-800">
+                    95%<span className="text-[#FA8128]">+</span>
+                  </p>
+                  <p className="text-gray-500 text-sm mt-1">Placement Improvement</p>
+                </div>
+                <div className="border-l border-orange-200 pl-10">
+                  <p className="text-3xl sm:text-4xl font-bold text-gray-800">
+                    On-Campus
+                  </p>
+                  <p className="text-gray-500 text-sm mt-1">Offline Delivery</p>
+                </div>
+              </div>
             </div>
-            <div className="border-l border-orange-200 pl-10">
-              <p className="text-3xl sm:text-4xl font-bold text-gray-800">
-                On-Campus
-              </p>
-              <p className="text-gray-500 text-sm mt-1">Offline Delivery</p>
+
+            {/* Right: Form */}
+            <div className="w-full lg:w-[420px] flex-shrink-0">
+              {submitted ? (
+                <div className="bg-white border border-[#FA8128]/30 rounded-2xl p-8 text-center shadow-md">
+                  <p className="text-3xl mb-3">🎉</p>
+                  <h3 className="text-xl font-bold text-gray-800 mb-2">Thank you for reaching out!</h3>
+                  <p className="text-gray-500 text-sm">Our team will contact you within 24 hours.</p>
+                </div>
+              ) : (
+                <form onSubmit={handleSubmit} className="bg-white rounded-2xl p-6 shadow-md border border-orange-100 space-y-4">
+                  <h3 className="text-lg font-bold text-gray-800">Bring CRT to Your Campus</h3>
+                  <div>
+                    <label className="block text-xs font-semibold text-gray-600 mb-1">College Name <span className="text-[#FA8128]">*</span></label>
+                    <input
+                      type="text"
+                      required
+                      placeholder="e.g., RV College of Engineering"
+                      value={formData.collegeName}
+                      onChange={(e) => setFormData({ ...formData, collegeName: e.target.value })}
+                      className="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg outline-none focus:border-[#FA8128]"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-semibold text-gray-600 mb-1">Contact Person <span className="text-[#FA8128]">*</span></label>
+                    <input
+                      type="text"
+                      required
+                      placeholder="TPO / Placement Officer Name"
+                      value={formData.contactPerson}
+                      onChange={(e) => setFormData({ ...formData, contactPerson: e.target.value })}
+                      className="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg outline-none focus:border-[#FA8128]"
+                    />
+                  </div>
+                  <div className="grid grid-cols-2 gap-3">
+                    <div>
+                      <label className="block text-xs font-semibold text-gray-600 mb-1">Phone <span className="text-[#FA8128]">*</span></label>
+                      <input
+                        type="tel"
+                        required
+                        placeholder="+91 XXXXX XXXXX"
+                        value={formData.phone}
+                        onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                        className="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg outline-none focus:border-[#FA8128]"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs font-semibold text-gray-600 mb-1">Email <span className="text-[#FA8128]">*</span></label>
+                      <input
+                        type="email"
+                        required
+                        placeholder="tpo@college.edu"
+                        value={formData.email}
+                        onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                        className="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg outline-none focus:border-[#FA8128]"
+                      />
+                    </div>
+                  </div>
+                  <div>
+                    <label className="block text-xs font-semibold text-gray-600 mb-1">Message</label>
+                    <textarea
+                      rows={3}
+                      placeholder="Batch size, preferred timeline, etc."
+                      value={formData.message}
+                      onChange={(e) => setFormData({ ...formData, message: e.target.value })}
+                      className="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg outline-none focus:border-[#FA8128] resize-none"
+                    />
+                  </div>
+                  {error && <p className="text-red-500 text-xs">{error}</p>}
+                  <button
+                    type="submit"
+                    disabled={submitting}
+                    className="w-full bg-[#FA8128] hover:bg-orange-600 text-white font-semibold py-2.5 rounded-lg transition-colors duration-300 disabled:opacity-60 text-sm"
+                  >
+                    {submitting ? "Sending..." : "Send Enquiry"}
+                  </button>
+                </form>
+              )}
             </div>
           </div>
         </div>

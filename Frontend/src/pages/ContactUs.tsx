@@ -259,8 +259,7 @@ function ContactUs() {
                   <div className="flex items-start gap-2">
                     <MapPin size={14} className="mt-1 flex-shrink-0" />
                     <span>
-                      No. 91, 3rd Cross Basappa Layout, Govipuram Extn,
-                      Kempegowda Nagar, Bengaluru, Karnataka - 560019
+                      13th Main, 17th Cross, 5th Phase, JP Nagar, Bangalore – 560078
                     </span>
                   </div>
                 </div>

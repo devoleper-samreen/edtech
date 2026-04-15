@@ -79,7 +79,7 @@ function IndustryTraining() {
             viewport={{ once: true }}
           >
             <img
-              src="/techfox_transparent2.png"
+              src="/texfox_transparent.png"
               alt="Professional with laptop"
               className="w-full max-w-[300px] sm:max-w-md h-[300px] sm:h-[350px] md:h-[400px] rounded-lg object-cover"
             />

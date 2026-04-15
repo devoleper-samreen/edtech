@@ -5,7 +5,6 @@ import ExploreCourses from '../components/ExploreCourses'
 import ModesWeTrain from '../components/ModesWeTrain'
 import HiringPartners from '../components/HiringPartners'
 import WhyChooseUs from '../components/WhyChooseUs'
-import Testimonials from '../components/Testimonials'
 import FAQ from '../components/FAQ'
 import Footer from '../components/Footer'
 import CallbackModal from '../components/CallbackModal'
@@ -20,7 +19,6 @@ function Home() {
       <ModesWeTrain />
       <WhyChooseUs />
       <HiringPartners />
-      <Testimonials />
       <FAQ />
       <Footer />
       <CallbackModal />
