@@ -26,6 +26,8 @@ import Admins from "./admin/pages/Admins";
 import Batches from "./admin/pages/Batches";
 import Testimonials from "./admin/pages/Testimonials";
 import Placements from "./admin/pages/Placements";
+import InternshipPrograms from "./admin/pages/InternshipPrograms";
+import InternshipDetail from "./pages/InternshipDetail";
 
 // Student Imports
 import StudentLayout from "./student/components/StudentLayout";
@@ -73,6 +75,7 @@ function App() {
         <Route path="/summer-internship" element={<CorporateTraining />} />
         <Route path="/crt-program" element={<CRTProgram />} />
         <Route path="/course/:id" element={<CourseDetails />} />
+        <Route path="/internship/:id" element={<InternshipDetail />} />
         <Route path="/courses" element={<Courses />} />
 
         {/* Admin Routes - Protected */}
@@ -93,6 +96,7 @@ function App() {
           <Route path="callbacks" element={<CallbackRequests />} />
           <Route path="testimonials" element={<Testimonials />} />
           <Route path="placements" element={<Placements />} />
+          <Route path="internships" element={<InternshipPrograms />} />
           <Route path="users" element={<Users />} />
           <Route path="admins" element={<Admins />} />
         </Route>

@@ -1,10 +1,12 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import toast from "react-hot-toast";
-import { Plus, Search, Edit2, Trash2, BookOpen, X } from "lucide-react";
+import { Plus, Search, Edit2, Trash2, BookOpen, X, Upload } from "lucide-react";
 // @ts-ignore
 import { courseService } from "../../services/courseService";
 // @ts-ignore
 import { categoryService } from "../../services/categoryService";
+// @ts-ignore
+import api from "../../config/api";
 import ConfirmModal from "../../components/ConfirmModal";
 
 const CoursesManagement = () => {
@@ -17,6 +19,8 @@ const CoursesManagement = () => {
   const [loading, setLoading] = useState(true);
   const [editingCourse, setEditingCourse] = useState<any>(null);
   const [confirmDelete, setConfirmDelete] = useState({ isOpen: false, id: "" });
+  const [imageUploading, setImageUploading] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const [formData, setFormData] = useState({
     title: "",
     description: "",
@@ -26,6 +30,7 @@ const CoursesManagement = () => {
     duration: "",
     level: "Beginner",
     status: "draft",
+    thumbnail: "",
   });
 
   useEffect(() => {
@@ -94,6 +99,7 @@ const CoursesManagement = () => {
         duration: "",
         level: "Beginner",
         status: "draft",
+        thumbnail: "",
       });
       fetchCourses();
     } catch (error) {
@@ -113,8 +119,26 @@ const CoursesManagement = () => {
       duration: course.duration || "",
       level: course.level || "Beginner",
       status: course.status,
+      thumbnail: course.thumbnail || "",
     });
     setIsModalOpen(true);
+  };
+
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setImageUploading(true);
+    try {
+      const form = new FormData();
+      form.append('image', file);
+      const res = await api.post('/upload', form, { headers: { 'Content-Type': 'multipart/form-data' } });
+      setFormData(prev => ({ ...prev, thumbnail: res.data.data.url }));
+      toast.success('Image uploaded!');
+    } catch {
+      toast.error('Image upload failed');
+    } finally {
+      setImageUploading(false);
+    }
   };
 
   const handleDeleteClick = (id: string) => {
@@ -137,7 +161,7 @@ const CoursesManagement = () => {
       {/* Add/Edit Course Modal */}
       {isModalOpen && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-lg w-full max-w-2xl shadow-xl max-h-[90vh] overflow-y-auto">
+          <div className="bg-white rounded-lg w-full max-w-2xl shadow-xl max-h-[90vh] overflow-y-auto" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
             <div className="flex items-center justify-between px-4 py-3 sticky top-0 bg-white">
               <h2 className="text-sm font-semibold text-gray-800">
                 {editingCourse ? "Edit Course" : "Add New Course"}
@@ -267,6 +291,39 @@ const CoursesManagement = () => {
                   <option value="published">Published</option>
                 </select>
               </div>
+              <div>
+                <label className="block text-xs font-medium text-gray-700 mb-1">Thumbnail</label>
+                <input type="file" accept="image/*" ref={fileInputRef} onChange={handleImageUpload} className="hidden" />
+                {formData.thumbnail ? (
+                  <div className="relative">
+                    <img src={formData.thumbnail} alt="thumbnail" className="w-full h-32 object-cover rounded-lg border border-gray-200" />
+                    <button
+                      type="button"
+                      onClick={() => { setFormData({ ...formData, thumbnail: "" }); if (fileInputRef.current) fileInputRef.current.value = ""; }}
+                      className="absolute top-1 right-1 bg-red-500 text-white rounded-full p-0.5 hover:bg-red-600"
+                    >
+                      <X size={12} />
+                    </button>
+                  </div>
+                ) : (
+                  <button
+                    type="button"
+                    onClick={() => fileInputRef.current?.click()}
+                    disabled={imageUploading}
+                    className="w-full h-20 border-2 border-dashed border-gray-200 rounded-lg flex flex-col items-center justify-center gap-1 hover:border-[#FA8128] transition-colors disabled:opacity-60"
+                  >
+                    {imageUploading ? (
+                      <div className="w-5 h-5 border-2 border-[#FA8128] border-t-transparent rounded-full animate-spin"></div>
+                    ) : (
+                      <>
+                        <Upload size={18} className="text-gray-400" />
+                        <span className="text-xs text-gray-400">Click to upload thumbnail</span>
+                      </>
+                    )}
+                  </button>
+                )}
+              </div>
+
               <div className="flex gap-2 pt-2">
                 <button
                   type="button"
@@ -451,9 +508,13 @@ const CoursesManagement = () => {
                     <tr key={course._id} className="border-b border-gray-50 hover:bg-gray-50">
                       <td className="py-2.5 px-4">
                         <div className="flex items-center gap-2">
-                          <div className="w-7 h-7 bg-orange-100 rounded-md flex items-center justify-center">
-                            <BookOpen size={14} className="text-[#FA8128]" />
-                          </div>
+                          {course.thumbnail ? (
+                            <img src={course.thumbnail} alt={course.title} className="w-9 h-9 rounded-md object-cover flex-shrink-0" />
+                          ) : (
+                            <div className="w-9 h-9 bg-orange-100 rounded-md flex items-center justify-center flex-shrink-0">
+                              <BookOpen size={14} className="text-[#FA8128]" />
+                            </div>
+                          )}
                           <div>
                             <p className="text-sm font-medium text-gray-800">{course.title}</p>
                             <p className="text-[10px] text-gray-500">{course.level}</p>

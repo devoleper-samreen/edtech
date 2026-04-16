@@ -33,6 +33,23 @@ const enrollmentSchema = new mongoose.Schema({
   notes: {
     type: String,
     default: ''
+  },
+  paymentId: {
+    type: String,
+    default: ''
+  },
+  orderId: {
+    type: String,
+    default: ''
+  },
+  paymentStatus: {
+    type: String,
+    enum: ['Pending', 'Paid', 'Failed'],
+    default: 'Pending'
+  },
+  amount: {
+    type: Number,
+    default: 0
   }
 }, {
   timestamps: true

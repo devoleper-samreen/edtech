@@ -44,6 +44,9 @@ import testimonialRoutes from './routes/testimonialRoutes.js';
 import studentRoutes from './routes/studentRoutes.js';
 import placementRoutes from './routes/placementRoutes.js';
 import siteSettingsRoutes from './routes/siteSettingsRoutes.js';
+import paymentRoutes from './routes/paymentRoutes.js';
+import internshipRoutes from './routes/internshipRoutes.js';
+import uploadRoutes from './routes/uploadRoutes.js';
 
 // API Routes
 app.get('/', (req, res) => {
@@ -79,6 +82,9 @@ app.use('/api/testimonials', testimonialRoutes);
 app.use('/api/student', studentRoutes);
 app.use('/api/placements', placementRoutes);
 app.use('/api/settings', siteSettingsRoutes);
+app.use('/api/payments', paymentRoutes);
+app.use('/api/internships', internshipRoutes);
+app.use('/api/upload', uploadRoutes);
 
 // Error handling middleware
 app.use((err, req, res, next) => {

@@ -14,6 +14,7 @@ import {
   Calendar,
   Quote,
   Trophy,
+  Briefcase,
   X,
 } from "lucide-react";
 
@@ -31,6 +32,7 @@ const navItems = [
   { name: "Callbacks", path: "/admin/callbacks", icon: PhoneCall },
   { name: "Testimonials", path: "/admin/testimonials", icon: Quote },
   { name: "Placements", path: "/admin/placements", icon: Trophy },
+  { name: "Internships", path: "/admin/internships", icon: Briefcase },
   { name: "Users", path: "/admin/users", icon: Users },
   { name: "Admins", path: "/admin/admins", icon: ShieldCheck },
   { name: "Enquiries", path: "/admin/enquiries", icon: MessageSquare },
@@ -87,7 +89,7 @@ const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
         </div>
 
         {/* Navigation */}
-        <nav className="flex-1 py-3 overflow-y-auto">
+        <nav className="flex-1 py-3 overflow-y-auto scrollbar-hide" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
           <ul className="px-2">
             {navItems.map((item) => (
               <li key={item.path}>

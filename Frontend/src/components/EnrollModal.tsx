@@ -5,7 +5,7 @@ import toast from "react-hot-toast";
 // @ts-ignore
 import { courseService } from "../services/courseService";
 // @ts-ignore
-import { enrollmentService } from "../services/enrollmentService";
+import api from "../config/api";
 
 interface EnrollModalProps {
   isOpen: boolean;
@@ -17,11 +17,18 @@ interface Course {
   _id: string;
   title: string;
   name?: string;
+  price: number;
+}
+
+declare global {
+  interface Window {
+    Razorpay: any;
+  }
 }
 
 function EnrollModal({ isOpen, onClose, courseName }: EnrollModalProps) {
-  const [selectedCourse, setSelectedCourse] = useState(courseName || "");
   const [courses, setCourses] = useState<Course[]>([]);
+  const [selectedCourse, setSelectedCourse] = useState<Course | null>(null);
   const [loading, setLoading] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [formData, setFormData] = useState({
@@ -32,16 +39,15 @@ function EnrollModal({ isOpen, onClose, courseName }: EnrollModalProps) {
   });
 
   useEffect(() => {
-    if (isOpen) {
-      fetchCourses();
-    }
+    if (isOpen) fetchCourses();
   }, [isOpen]);
 
   useEffect(() => {
-    if (courseName) {
-      setSelectedCourse(courseName);
+    if (courseName && courses.length > 0) {
+      const match = courses.find(c => (c.title || c.name) === courseName);
+      if (match) setSelectedCourse(match);
     }
-  }, [courseName]);
+  }, [courseName, courses]);
 
   const fetchCourses = async () => {
     setLoading(true);
@@ -50,11 +56,15 @@ function EnrollModal({ isOpen, onClose, courseName }: EnrollModalProps) {
       setCourses(response.data.courses || []);
     } catch (error) {
       console.error("Error fetching courses:", error);
-      // Fallback to empty array if API fails
       setCourses([]);
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleCourseChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const course = courses.find(c => c._id === e.target.value) || null;
+    setSelectedCourse(course);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -64,7 +74,6 @@ function EnrollModal({ isOpen, onClose, courseName }: EnrollModalProps) {
       toast.error("Please fill all required fields");
       return;
     }
-
     if (formData.phone.length !== 10) {
       toast.error("Phone number must be 10 digits");
       return;
@@ -72,21 +81,64 @@ function EnrollModal({ isOpen, onClose, courseName }: EnrollModalProps) {
 
     setSubmitting(true);
     try {
-      await enrollmentService.createEnrollment({
-        name: formData.name,
-        email: formData.email,
-        phone: `+91${formData.phone}`,
-        course: selectedCourse,
-        message: formData.message
+      // Step 1: Create Razorpay order
+      const orderRes = await api.post('/payments/create-order', { courseId: selectedCourse._id });
+      const { orderId, amount, currency } = orderRes.data.data;
+
+      // Step 2: Open Razorpay checkout
+      const options = {
+        key: import.meta.env.VITE_RAZORPAY_KEY_ID,
+        amount,
+        currency,
+        name: 'TechFox',
+        description: `Enrollment - ${selectedCourse.title || selectedCourse.name}`,
+        order_id: orderId,
+        handler: async (response: any) => {
+          try {
+            // Step 3: Verify payment & save enrollment
+            await api.post('/payments/verify', {
+              razorpay_order_id: response.razorpay_order_id,
+              razorpay_payment_id: response.razorpay_payment_id,
+              razorpay_signature: response.razorpay_signature,
+              name: formData.name,
+              email: formData.email,
+              phone: `+91${formData.phone}`,
+              course: selectedCourse.title || selectedCourse.name,
+              courseId: selectedCourse._id,
+              message: formData.message,
+              amount
+            });
+            toast.success("Payment successful! Enrollment confirmed.");
+            setFormData({ name: "", email: "", phone: "", message: "" });
+            setSelectedCourse(null);
+            onClose();
+          } catch {
+            toast.error("Payment done but enrollment failed. Please contact support.");
+          }
+        },
+        prefill: {
+          name: formData.name,
+          email: formData.email,
+          contact: `+91${formData.phone}`
+        },
+        theme: { color: '#FA8128' },
+        modal: {
+          ondismiss: () => {
+            setSubmitting(false);
+          }
+        }
+      };
+
+      const rzp = new window.Razorpay(options);
+      rzp.on('payment.failed', () => {
+        toast.error("Payment failed. Please try again.");
+        setSubmitting(false);
       });
-      toast.success("Enrollment submitted successfully! We will contact you soon.");
-      setFormData({ name: "", email: "", phone: "", message: "" });
-      setSelectedCourse("");
-      onClose();
+      rzp.open();
+
     } catch (error: any) {
-      console.error("Error submitting enrollment:", error);
-      toast.error(error.response?.data?.message || "Failed to submit enrollment");
-    } finally {
+      console.error("Error initiating payment:", error);
+      toast.error(error.response?.data?.message || "Failed to initiate payment");
       setSubmitting(false);
     }
   };
@@ -95,7 +147,6 @@ function EnrollModal({ isOpen, onClose, courseName }: EnrollModalProps) {
     <AnimatePresence>
       {isOpen && (
         <>
-          {/* Backdrop */}
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -104,7 +155,6 @@ function EnrollModal({ isOpen, onClose, courseName }: EnrollModalProps) {
             className="fixed inset-0 bg-black/50 z-50"
           />
 
-          {/* Modal Content */}
           <motion.div
             initial={{ opacity: 0, scale: 0.9, y: 20 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
@@ -119,7 +169,14 @@ function EnrollModal({ isOpen, onClose, courseName }: EnrollModalProps) {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.1 }}
             >
-              <h2 className="text-lg sm:text-xl font-bold text-gray-800">Enroll now</h2>
+              <div>
+                <h2 className="text-lg sm:text-xl font-bold text-gray-800">Enroll Now</h2>
+                {selectedCourse && selectedCourse.price > 0 && (
+                  <p className="text-sm text-[#FA8128] font-semibold mt-0.5">
+                    ₹{selectedCourse.price.toLocaleString('en-IN')}
+                  </p>
+                )}
+              </div>
               <motion.button
                 onClick={onClose}
                 className="text-gray-400 hover:text-gray-600 transition-colors"
@@ -198,8 +255,8 @@ function EnrollModal({ isOpen, onClose, courseName }: EnrollModalProps) {
                       <span className="text-red-500">*</span> Course
                     </label>
                     <select
-                      value={selectedCourse}
-                      onChange={(e) => setSelectedCourse(e.target.value)}
+                      value={selectedCourse?._id || ""}
+                      onChange={handleCourseChange}
                       className="w-full px-3 py-2.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-[#FA8128] bg-white"
                       required
                     >
@@ -208,8 +265,9 @@ function EnrollModal({ isOpen, onClose, courseName }: EnrollModalProps) {
                         <option disabled>Loading courses...</option>
                       ) : (
                         courses.map((course) => (
-                          <option key={course._id} value={course.title || course.name}>
+                          <option key={course._id} value={course._id}>
                             {course.title || course.name}
+                            {course.price > 0 ? ` — ₹${course.price.toLocaleString('en-IN')}` : ''}
                           </option>
                         ))
                       )}
@@ -223,7 +281,7 @@ function EnrollModal({ isOpen, onClose, courseName }: EnrollModalProps) {
                   </label>
                   <textarea
                     placeholder="Enter your message"
-                    rows={4}
+                    rows={3}
                     value={formData.message}
                     onChange={(e) => setFormData({ ...formData, message: e.target.value })}
                     className="w-full px-3 py-2.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-[#FA8128] resize-none"
@@ -234,11 +292,15 @@ function EnrollModal({ isOpen, onClose, courseName }: EnrollModalProps) {
                   <motion.button
                     type="submit"
                     disabled={submitting}
-                    className="bg-[#FA8128] hover:bg-[#FA8128] text-white font-medium py-2.5 px-8 rounded-lg transition-colors text-sm disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="bg-[#FA8128] hover:bg-orange-600 text-white font-medium py-2.5 px-8 rounded-lg transition-colors text-sm disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
                   >
-                    {submitting ? "Submitting..." : "Submit"}
+                    {submitting ? "Processing..." : (
+                      selectedCourse && selectedCourse.price > 0
+                        ? `Pay ₹${selectedCourse.price.toLocaleString('en-IN')} & Enroll`
+                        : "Submit"
+                    )}
                   </motion.button>
                 </div>
               </form>

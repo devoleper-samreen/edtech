@@ -60,7 +60,7 @@ const courseSchema = new mongoose.Schema({
   totalRatings: {
     type: Number,
     default: 0
-  }
+  },
 }, {
   timestamps: true
 });

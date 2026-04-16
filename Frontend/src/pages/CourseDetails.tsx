@@ -184,7 +184,7 @@ function CourseDetails() {
       {/* Hero Section */}
       <section className="w-full bg-[#fef7f0]">
         <div className="w-full max-w-[1100px] mx-auto px-6 py-12">
-          <div className="flex flex-col lg:flex-row gap-8">
+          <div className="flex flex-col lg:flex-row gap-8 items-start">
             {/* Left Content */}
             <motion.div
               className="flex-1"
@@ -246,21 +246,21 @@ function CourseDetails() {
 
             {/* Right Image */}
             <motion.div
-              className="lg:w-[300px] flex-shrink-0"
+              className="lg:w-[380px] flex-shrink-0 flex justify-center lg:mt-14"
               initial={{ opacity: 0, x: 30 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.5, delay: 0.2 }}
             >
-              <div className="w-full h-[200px] bg-gradient-to-br from-orange-100 to-orange-200 rounded-lg overflow-hidden">
+              <div className="w-full rounded-2xl overflow-hidden shadow-md">
                 {courseImage ? (
                   <img
                     src={courseImage}
                     alt={courseTitle}
-                    className="w-full h-full object-cover"
+                    className="w-full object-contain"
                   />
                 ) : (
-                  <div className="w-full h-full flex items-center justify-center text-orange-400">
-                    <svg width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1">
+                  <div className="w-full h-56 bg-gradient-to-br from-orange-400 to-orange-600 flex items-center justify-center">
+                    <svg width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="1" opacity="0.4">
                       <rect x="2" y="3" width="20" height="14" rx="2"/>
                       <path d="M8 21h8M12 17v4"/>
                     </svg>

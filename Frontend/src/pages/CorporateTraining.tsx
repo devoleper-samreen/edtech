@@ -1,4 +1,4 @@
-import { User, Mail, GraduationCap, Star, ChevronLeft, ChevronRight, X, Quote } from "lucide-react";
+import { User, Mail, GraduationCap, Star, ChevronLeft, ChevronRight, X, Quote, IndianRupee } from "lucide-react";
 import { useRef, useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
@@ -12,7 +12,9 @@ import FAQ from "../components/FAQ";
 // @ts-ignore
 import { callbackService } from "../services/callbackService";
 // @ts-ignore
-import { courseService } from "../services/courseService";
+import { internshipService } from "../services/internshipService";
+// @ts-ignore
+import api from "../services/../config/api";
 import { testimonialService } from "../services/testimonialService";
 
 type TabType = "general" | "corporate" | "hire";
@@ -77,24 +79,19 @@ interface Testimonial {
   rating: number;
 }
 
-interface Course {
-  _id: string;
-  title: string;
-  name?: string;
-  description: string;
-  rating: number;
-  thumbnail?: string;
-}
 
 function CorporateTraining() {
-  const sliderRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
+  const sliderRef = useRef<HTMLDivElement>(null);
   //const [openFaqIndex, setOpenFaqIndex] = useState<number | null>(null);
   const [isCallbackOpen, setIsCallbackOpen] = useState(false);
-  const [callbackDefaultTab, setCallbackDefaultTab] = useState<TabType>("corporate");
+  const [callbackDefaultTab] = useState<TabType>("corporate");
+  const [enrollProgram, setEnrollProgram] = useState<any>(null);
+  const [enrollForm, setEnrollForm] = useState({ name: "", email: "", phone: "" });
+  const [enrollSubmitting, setEnrollSubmitting] = useState(false);
   const [selectedTestimonial, setSelectedTestimonial] = useState<Testimonial | null>(null);
-  const [courses, setCourses] = useState<Course[]>([]);
-  const [coursesLoading, setCoursesLoading] = useState(true);
+  const [programs, setPrograms] = useState<any[]>([]);
+  const [programsLoading, setProgramsLoading] = useState(true);
   const [testimonials, setTestimonials] = useState<Testimonial[]>([]);
   const [testimonialsLoading, setTestimonialsLoading] = useState(true);
 
@@ -110,19 +107,19 @@ function CorporateTraining() {
   const [phoneError, setPhoneError] = useState("");
 
   useEffect(() => {
-    fetchCourses();
+    fetchPrograms();
     fetchTestimonials();
   }, []);
 
-  const fetchCourses = async () => {
-    setCoursesLoading(true);
+  const fetchPrograms = async () => {
+    setProgramsLoading(true);
     try {
-      const response = await courseService.getAllCourses({ status: 'published', limit: 8 });
-      setCourses(response.data?.courses || response.data || []);
+      const response = await internshipService.getActivePrograms();
+      setPrograms(response.data || []);
     } catch (error) {
-      console.error("Error fetching courses:", error);
+      console.error("Error fetching internship programs:", error);
     } finally {
-      setCoursesLoading(false);
+      setProgramsLoading(false);
     }
   };
 
@@ -138,14 +135,46 @@ function CorporateTraining() {
     }
   };
 
-  const handleCourseClick = (courseId: string) => {
-    navigate(`/course/${courseId}`);
-    window.scrollTo(0, 0);
-  };
 
-  const handleEnquireClick = () => {
-    setCallbackDefaultTab("corporate");
-    setIsCallbackOpen(true);
+
+  const handleEnrollSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (enrollForm.phone.length !== 10) { toast.error("Phone number must be 10 digits"); return; }
+    setEnrollSubmitting(true);
+    try {
+      const orderRes = await api.post('/payments/create-order', { internshipId: enrollProgram._id });
+      const { orderId, amount, currency } = orderRes.data.data;
+      const options = {
+        key: import.meta.env.VITE_RAZORPAY_KEY_ID,
+        amount, currency,
+        name: 'TechFox',
+        description: enrollProgram.title,
+        order_id: orderId,
+        handler: async (response: any) => {
+          try {
+            await api.post('/payments/verify', {
+              razorpay_order_id: response.razorpay_order_id,
+              razorpay_payment_id: response.razorpay_payment_id,
+              razorpay_signature: response.razorpay_signature,
+              name: enrollForm.name, email: enrollForm.email,
+              phone: `+91${enrollForm.phone}`, course: enrollProgram.title, amount
+            });
+            toast.success("Payment successful! Enrollment confirmed.");
+            setEnrollProgram(null);
+            setEnrollForm({ name: "", email: "", phone: "" });
+          } catch { toast.error("Payment done but enrollment failed. Please contact support."); }
+        },
+        prefill: { name: enrollForm.name, email: enrollForm.email, contact: `+91${enrollForm.phone}` },
+        theme: { color: '#FA8128' },
+        modal: { ondismiss: () => setEnrollSubmitting(false) }
+      };
+      const rzp = new (window as any).Razorpay(options);
+      rzp.on('payment.failed', () => { toast.error("Payment failed."); setEnrollSubmitting(false); });
+      rzp.open();
+    } catch (error: any) {
+      toast.error(error.response?.data?.message || "Failed to initiate payment");
+      setEnrollSubmitting(false);
+    }
   };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -207,7 +236,6 @@ function CorporateTraining() {
     }
   };
 
-  const defaultImage = "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=400&h=250&fit=crop";
 
   const features = [
     {
@@ -384,7 +412,7 @@ function CorporateTraining() {
       </section>
 
       {/* Program Overview */}
-      <section className="w-full py-12 sm:py-16 bg-white">
+      <section id="program-overview" className="w-full py-12 sm:py-16 bg-white">
         <div className="w-full max-w-[1100px] mx-auto px-4 sm:px-6">
           <motion.div
             className="text-center mb-10"
@@ -573,12 +601,6 @@ function CorporateTraining() {
         </div>
       </section>
 
-      {/* Hiring Partners */}
-      <HiringPartners />
-
-      {/* Modes We Train */}
-      <ModesWeTrain />
-
       {/* Internship Programs Section */}
       <section className="w-full py-16 bg-white">
         <h2 className="text-3xl md:text-4xl font-bold text-center text-gray-800 mb-12">
@@ -586,34 +608,30 @@ function CorporateTraining() {
         </h2>
 
         <div className="w-full max-w-[1100px] mx-auto px-6">
-          {coursesLoading ? (
+          {programsLoading ? (
             <div className="flex flex-col items-center justify-center py-12">
               <div className="w-10 h-10 border-4 border-[#FA8128] border-t-transparent rounded-full animate-spin"></div>
-              <p className="mt-3 text-gray-500 text-sm">Loading courses...</p>
+              <p className="mt-3 text-gray-500 text-sm">Loading programs...</p>
             </div>
-          ) : courses.length === 0 ? (
+          ) : programs.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-12 text-center">
               <GraduationCap size={48} className="text-gray-300 mb-3" />
-              <p className="text-gray-500 text-sm">No courses available at the moment.</p>
+              <p className="text-gray-500 text-sm">No programs available at the moment.</p>
             </div>
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-              {courses.map((course) => (
+              {programs.map((program) => (
                 <div
-                  key={course._id}
-                  onClick={() => handleCourseClick(course._id)}
-                  className="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-lg transition-shadow cursor-pointer"
+                  key={program._id}
+                  className="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-lg transition-shadow"
                 >
-                  {/* Course Image */}
-                  <div className="h-40 bg-gradient-to-br from-orange-400 to-orange-600 relative overflow-hidden">
-                    {course.thumbnail ? (
+                  <div className={`h-40 relative overflow-hidden ${program.thumbnail ? 'bg-white' : 'bg-gradient-to-br from-orange-400 to-orange-600'}`}>
+                    {program.thumbnail ? (
                       <img
-                        src={course.thumbnail}
-                        alt={course.title || course.name}
-                        className="w-full h-full object-cover"
-                        onError={(e) => {
-                          (e.target as HTMLImageElement).src = defaultImage;
-                        }}
+                        src={program.thumbnail}
+                        alt={program.title}
+                        className="w-full h-full object-contain"
+                        onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
                       />
                     ) : (
                       <div className="absolute inset-0 flex items-center justify-center">
@@ -621,43 +639,19 @@ function CorporateTraining() {
                       </div>
                     )}
                   </div>
-
-                  {/* Course Content */}
                   <div className="p-4">
-                    <h3 className="font-bold text-gray-800 mb-2 text-sm leading-tight line-clamp-2">
-                      {course.title || course.name}
-                    </h3>
-                    <p className="text-gray-500 text-xs mb-3 leading-relaxed line-clamp-2">
-                      {course.description}
-                    </p>
-
-                    {/* Rating */}
-                    <div className="flex items-center gap-1 mb-4">
-                      <span className="font-semibold text-gray-800 text-sm">
-                        {course.rating || 4.5}
-                      </span>
-                      <Star size={14} className="text-amber-400 fill-amber-400" />
+                    <h3 className="font-bold text-gray-800 mb-1 text-sm leading-tight line-clamp-2">{program.title}</h3>
+                    <p className="text-gray-500 text-xs mb-2 leading-relaxed line-clamp-2">{program.description}</p>
+                    <div className="flex items-center justify-between mb-3">
+                      {program.duration && <span className="text-xs text-[#FA8128] font-medium">{program.duration}</span>}
                     </div>
-
-                    {/* Buttons */}
+                    {program.price > 0 && <p className="text-sm font-bold text-gray-800 mb-3">₹{program.price.toLocaleString('en-IN')}</p>}
                     <div className="flex gap-2">
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleEnquireClick();
-                        }}
-                        className="flex-1 bg-[#FA8128] hover:bg-[#FA8128] text-white text-xs font-medium py-2 px-3 rounded-md transition-colors"
-                      >
-                        Enquire Now
+                      <button onClick={() => setEnrollProgram(program)} className="flex-1 bg-[#FA8128] hover:bg-orange-600 text-white text-xs font-medium py-2 px-3 rounded-md transition-colors">
+                        Enroll Now
                       </button>
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleCourseClick(course._id);
-                        }}
-                        className="flex-1 border border-[#FA8128] text-[#FA8128] hover:bg-orange-50 text-xs font-medium py-2 px-3 rounded-md transition-colors"
-                      >
-                        Know more
+                      <button onClick={() => navigate(`/internship/${program._id}`)} className="flex-1 border border-[#FA8128] text-[#FA8128] hover:bg-orange-50 text-xs font-medium py-2 px-3 rounded-md transition-colors">
+                        Know More
                       </button>
                     </div>
                   </div>
@@ -667,6 +661,12 @@ function CorporateTraining() {
           )}
         </div>
       </section>
+
+      {/* Hiring Partners */}
+      <HiringPartners />
+
+      {/* Modes We Train */}
+      <ModesWeTrain />
 
       {/* Corporate Training Features Section */}
       <section className="w-full py-12 sm:py-16 bg-white relative overflow-hidden">
@@ -891,6 +891,67 @@ function CorporateTraining() {
         onClose={() => setIsCallbackOpen(false)}
         defaultTab={callbackDefaultTab}
       />
+
+      {/* Enrollment Payment Modal */}
+      <AnimatePresence>
+        {enrollProgram && (
+          <>
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+              onClick={() => setEnrollProgram(null)} className="fixed inset-0 bg-black/50 z-50" />
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9, y: 20 }} animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.9, y: 20 }}
+              transition={{ type: "spring", damping: 25, stiffness: 300 }}
+              className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white rounded-xl shadow-2xl z-50 w-[95%] max-w-md"
+            >
+              <div className="flex items-center justify-between p-4 border-b border-gray-100">
+                <div>
+                  <h2 className="text-base font-bold text-gray-800">{enrollProgram.title}</h2>
+                  {enrollProgram.price > 0 && (
+                    <div className="flex items-center gap-1 text-sm text-[#FA8128] font-semibold mt-0.5">
+                      <IndianRupee size={14} />₹{enrollProgram.price.toLocaleString('en-IN')}
+                    </div>
+                  )}
+                </div>
+                <button onClick={() => setEnrollProgram(null)} className="text-gray-400 hover:text-gray-600"><X size={20} /></button>
+              </div>
+              <form onSubmit={handleEnrollSubmit} className="p-4 space-y-3">
+                <div>
+                  <label className="block text-xs font-medium text-gray-700 mb-1">Full Name *</label>
+                  <input type="text" required placeholder="Enter your full name" value={enrollForm.name}
+                    onChange={(e) => setEnrollForm({ ...enrollForm, name: e.target.value })}
+                    className="w-full px-3 py-2.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-[#FA8128]" />
+                </div>
+                <div>
+                  <label className="block text-xs font-medium text-gray-700 mb-1">Email *</label>
+                  <input type="email" required placeholder="Enter your email" value={enrollForm.email}
+                    onChange={(e) => setEnrollForm({ ...enrollForm, email: e.target.value })}
+                    className="w-full px-3 py-2.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-[#FA8128]" />
+                </div>
+                <div>
+                  <label className="block text-xs font-medium text-gray-700 mb-1">Mobile Number *</label>
+                  <div className="flex border border-gray-200 rounded-lg overflow-hidden">
+                    <div className="flex items-center px-3 bg-gray-50 border-r border-gray-200">
+                      <span className="text-sm text-gray-600">+91</span>
+                    </div>
+                    <input type="tel" placeholder="Enter 10 digit number" value={enrollForm.phone}
+                      onChange={(e) => setEnrollForm({ ...enrollForm, phone: e.target.value.replace(/\D/g, '').slice(0, 10) })}
+                      className="flex-1 px-3 py-2.5 text-sm focus:outline-none" maxLength={10} required />
+                  </div>
+                  {enrollForm.phone && enrollForm.phone.length !== 10 && (
+                    <p className="text-xs text-red-500 mt-1">Phone number must be 10 digits</p>
+                  )}
+                </div>
+                <button type="submit" disabled={enrollSubmitting}
+                  className="w-full bg-[#FA8128] hover:bg-orange-600 text-white font-semibold py-2.5 rounded-lg transition-colors text-sm disabled:opacity-50 mt-2"
+                >
+                  {enrollSubmitting ? "Processing..." : enrollProgram.price > 0 ? `Pay ₹${enrollProgram.price.toLocaleString('en-IN')} & Enroll` : "Enroll Now"}
+                </button>
+              </form>
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
 
       {/* Testimonial Detail Modal */}
       <AnimatePresence>
