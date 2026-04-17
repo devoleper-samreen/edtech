@@ -27,8 +27,8 @@ const enrollmentSchema = new mongoose.Schema({
   },
   status: {
     type: String,
-    enum: ['New', 'Contacted', 'Enrolled', 'Cancelled'],
-    default: 'New'
+    enum: ['Unpaid', 'Paid'],
+    default: 'Unpaid'
   },
   notes: {
     type: String,

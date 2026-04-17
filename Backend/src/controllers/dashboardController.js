@@ -4,6 +4,7 @@ import CourseCategory from '../models/CourseCategory.js';
 import Enquiry from '../models/Enquiry.js';
 import CallbackRequest from '../models/CallbackRequest.js';
 import Enrollment from '../models/Enrollment.js';
+import InternshipEnrollment from '../models/InternshipEnrollment.js';
 import asyncHandler from '../utils/asyncHandler.js';
 
 // @desc    Get admin dashboard stats
@@ -90,9 +91,12 @@ export const getDashboardStats = asyncHandler(async (req, res) => {
 
   // Enrollment stats
   const totalEnrollmentRequests = await Enrollment.countDocuments();
-  const newEnrollmentRequests = await Enrollment.countDocuments({ status: 'New' });
-  const contactedEnrollments = await Enrollment.countDocuments({ status: 'Contacted' });
-  const enrolledEnrollments = await Enrollment.countDocuments({ status: 'Enrolled' });
+  const totalInternshipEnrollments = await InternshipEnrollment.countDocuments();
+  const newEnrollmentRequests = await Enrollment.countDocuments({ status: 'Unpaid' });
+  const contactedEnrollments = await Enrollment.countDocuments({ status: 'Unpaid' });
+  const paidCourseEnrollments = await Enrollment.countDocuments({ status: 'Paid' });
+  const paidInternshipEnrollments = await InternshipEnrollment.countDocuments({ status: 'Paid' });
+  const enrolledEnrollments = paidCourseEnrollments + paidInternshipEnrollments;
 
   // Recent activity
   const recentUsers = await User.find()
@@ -100,20 +104,25 @@ export const getDashboardStats = asyncHandler(async (req, res) => {
     .sort({ createdAt: -1 })
     .limit(5);
 
-  const recentEnquiries = await Enquiry.find()
+  const recentEnquiries = await Enquiry.find({ status: 'New' })
     .select('name email course status createdAt')
     .sort({ createdAt: -1 })
-    .limit(5);
+    .limit(50);
 
-  const recentCallbacks = await CallbackRequest.find()
-    .select('name phone course status createdAt')
+  const recentCallbacks = await CallbackRequest.find({ status: 'Pending' })
+    .select('name phone type status createdAt')
     .sort({ createdAt: -1 })
-    .limit(5);
+    .limit(50);
 
-  const recentEnrollments = await Enrollment.find()
+  const recentEnrollments = await Enrollment.find({ status: 'Paid' })
     .select('name email course status createdAt')
     .sort({ createdAt: -1 })
-    .limit(5);
+    .limit(50);
+
+  const recentInternshipEnrollments = await InternshipEnrollment.find({ status: 'Paid' })
+    .select('name email program status createdAt')
+    .sort({ createdAt: -1 })
+    .limit(50);
 
   res.status(200).json({
     success: true,
@@ -162,7 +171,8 @@ export const getDashboardStats = asyncHandler(async (req, res) => {
         users: recentUsers,
         enquiries: recentEnquiries,
         callbacks: recentCallbacks,
-        enrollments: recentEnrollments
+        enrollments: recentEnrollments,
+        internshipEnrollments: recentInternshipEnrollments
       }
     }
   });

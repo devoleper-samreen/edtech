@@ -499,6 +499,7 @@ const CoursesManagement = () => {
                     <th className="text-left py-2.5 px-4 text-xs font-semibold text-gray-600">Instructor</th>
                     <th className="text-left py-2.5 px-4 text-xs font-semibold text-gray-600">Duration</th>
                     <th className="text-left py-2.5 px-4 text-xs font-semibold text-gray-600">Price</th>
+                    <th className="text-left py-2.5 px-4 text-xs font-semibold text-gray-600">Enrolled</th>
                     <th className="text-left py-2.5 px-4 text-xs font-semibold text-gray-600">Status</th>
                     <th className="text-left py-2.5 px-4 text-xs font-semibold text-gray-600">Actions</th>
                   </tr>
@@ -528,6 +529,9 @@ const CoursesManagement = () => {
                       <td className="py-2.5 px-4 text-xs text-gray-600">{course.duration}</td>
                       <td className="py-2.5 px-4 text-xs font-medium text-gray-800">
                         ₹{course.price?.toLocaleString('en-IN')}
+                      </td>
+                      <td className="py-2.5 px-4 text-xs font-semibold text-[#FA8128]">
+                        {course.enrolledCount || 0}
                       </td>
                       <td className="py-2.5 px-4">
                         <span

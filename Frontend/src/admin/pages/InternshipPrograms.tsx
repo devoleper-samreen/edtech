@@ -27,7 +27,6 @@ const emptyForm = {
   price: "",
   thumbnail: "",
   earlyBirdDeadline: "",
-  enrolledCount: "",
   status: "Active"
 };
 
@@ -78,7 +77,6 @@ const InternshipPrograms = () => {
       price: program.price?.toString() || "",
       thumbnail: program.thumbnail || "",
       earlyBirdDeadline: program.earlyBirdDeadline || "",
-      enrolledCount: program.enrolledCount?.toString() || "0",
       status: program.status
     });
     setIsModalOpen(true);
@@ -108,7 +106,6 @@ const InternshipPrograms = () => {
       const payload = {
         ...formData,
         price: formData.price ? Number(formData.price) : 0,
-        enrolledCount: formData.enrolledCount ? Number(formData.enrolledCount) : 0
       };
       if (editingProgram) {
         await internshipService.updateProgram(editingProgram._id, payload);
@@ -332,30 +329,6 @@ const InternshipPrograms = () => {
                   />
                 </div>
               </div>
-              <div className="grid grid-cols-2 gap-3">
-                <div>
-                  <label className="block text-xs font-medium text-gray-700 mb-1">Enrolled Count</label>
-                  <input
-                    type="number"
-                    min="0"
-                    value={formData.enrolledCount}
-                    onChange={(e) => setFormData({ ...formData, enrolledCount: e.target.value })}
-                    placeholder="e.g., 120"
-                    className="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg outline-none focus:border-[#FA8128]"
-                  />
-                </div>
-                <div>
-                  <label className="block text-xs font-medium text-gray-700 mb-1">Status</label>
-                  <select
-                    value={formData.status}
-                    onChange={(e) => setFormData({ ...formData, status: e.target.value })}
-                    className="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg outline-none focus:border-[#FA8128]"
-                  >
-                    <option value="Active">Active</option>
-                    <option value="Inactive">Inactive</option>
-                  </select>
-                </div>
-              </div>
               <div>
                 <label className="block text-xs font-medium text-gray-700 mb-1">Thumbnail</label>
                 <input type="file" accept="image/*" ref={fileInputRef} onChange={handleImageUpload} className="hidden" />
@@ -388,15 +361,28 @@ const InternshipPrograms = () => {
                   </button>
                 )}
               </div>
-              <div>
-                <label className="block text-xs font-medium text-gray-700 mb-1">Early Bird Deadline</label>
-                <input
-                  type="text"
-                  value={formData.earlyBirdDeadline}
-                  onChange={(e) => setFormData({ ...formData, earlyBirdDeadline: e.target.value })}
-                  placeholder="e.g., 30 April 2026"
-                  className="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg outline-none focus:border-[#FA8128]"
-                />
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-xs font-medium text-gray-700 mb-1">Early Bird Deadline</label>
+                  <input
+                    type="text"
+                    value={formData.earlyBirdDeadline}
+                    onChange={(e) => setFormData({ ...formData, earlyBirdDeadline: e.target.value })}
+                    placeholder="e.g., 30 April 2026"
+                    className="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg outline-none focus:border-[#FA8128]"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-medium text-gray-700 mb-1">Status</label>
+                  <select
+                    value={formData.status}
+                    onChange={(e) => setFormData({ ...formData, status: e.target.value })}
+                    className="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg outline-none focus:border-[#FA8128]"
+                  >
+                    <option value="Active">Active</option>
+                    <option value="Inactive">Inactive</option>
+                  </select>
+                </div>
               </div>
               <div className="flex gap-2 pt-1">
                 <button

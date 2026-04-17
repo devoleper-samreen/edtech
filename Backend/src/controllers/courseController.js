@@ -1,6 +1,18 @@
 import Course from '../models/Course.js';
 import CourseCategory from '../models/CourseCategory.js';
+import Enrollment from '../models/Enrollment.js';
 import asyncHandler from '../utils/asyncHandler.js';
+
+const attachEnrolledCount = async (courses) => {
+  return Promise.all(courses.map(async (c) => {
+    const count = await Enrollment.countDocuments({
+      course: c.title || c.name,
+      status: 'Paid'
+    });
+    const obj = c.toObject ? c.toObject() : c;
+    return { ...obj, enrolledCount: count };
+  }));
+};
 
 // @desc    Get all courses
 // @route   GET /api/courses
@@ -37,11 +49,12 @@ export const getAllCourses = asyncHandler(async (req, res) => {
     .limit(parseInt(limit));
 
   const total = await Course.countDocuments(query);
+  const coursesWithCount = await attachEnrolledCount(courses);
 
   res.status(200).json({
     success: true,
     data: {
-      courses,
+      courses: coursesWithCount,
       pagination: {
         page: parseInt(page),
         limit: parseInt(limit),
@@ -67,9 +80,16 @@ export const getCourse = asyncHandler(async (req, res) => {
     });
   }
 
+  const enrolledCount = await Enrollment.countDocuments({
+    course: course.title || course.name,
+    status: 'Paid'
+  });
+
+  const courseData = { ...course.toObject(), enrolledCount };
+
   res.status(200).json({
     success: true,
-    data: course
+    data: courseData
   });
 });
 

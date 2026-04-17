@@ -74,7 +74,7 @@ function InternshipDetail() {
       const orderRes = await api.post('/payments/create-order', { internshipId: program._id });
       const { orderId, amount, currency } = orderRes.data.data;
       const options = {
-        key: import.meta.env.VITE_RAZORPAY_KEY_ID,
+        key: import.meta.env.VITE_RAZORPAY_KEY_ID || 'rzp_live_SeEtwSJU8koFDl',
         amount, currency,
         name: 'TechFox',
         description: program.title,
@@ -86,7 +86,8 @@ function InternshipDetail() {
               razorpay_payment_id: response.razorpay_payment_id,
               razorpay_signature: response.razorpay_signature,
               name: formData.name, email: formData.email,
-              phone: `+91${formData.phone}`, course: program.title, amount
+              phone: `+91${formData.phone}`, course: program.title,
+              internshipId: program._id, amount
             });
             toast.success("Payment successful! Enrollment confirmed.");
             setIsModalOpen(false);

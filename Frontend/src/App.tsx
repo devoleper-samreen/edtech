@@ -27,6 +27,7 @@ import Batches from "./admin/pages/Batches";
 import Testimonials from "./admin/pages/Testimonials";
 import Placements from "./admin/pages/Placements";
 import InternshipPrograms from "./admin/pages/InternshipPrograms";
+import InternshipEnrollments from "./admin/pages/InternshipEnrollments";
 import InternshipDetail from "./pages/InternshipDetail";
 
 // Student Imports
@@ -97,6 +98,7 @@ function App() {
           <Route path="testimonials" element={<Testimonials />} />
           <Route path="placements" element={<Placements />} />
           <Route path="internships" element={<InternshipPrograms />} />
+          <Route path="internship-enrollments" element={<InternshipEnrollments />} />
           <Route path="users" element={<Users />} />
           <Route path="admins" element={<Admins />} />
         </Route>

@@ -55,6 +55,13 @@ interface DashboardStats {
     status: string;
     createdAt: string;
   }>;
+  recentActivity: {
+    enrollments: Array<{ _id: string; name: string; course: string; status: string; createdAt: string; }>;
+    internshipEnrollments: Array<{ _id: string; name: string; program: string; status: string; createdAt: string; }>;
+    enquiries: Array<any>;
+    callbacks: Array<any>;
+    users: Array<any>;
+  };
   recentEnquiries: Array<{
     _id: string;
     name: string;
@@ -124,8 +131,8 @@ const Dashboard = () => {
         <div className="bg-white rounded-lg p-3 shadow-sm">
           <div className="flex items-center justify-between">
             <div className="min-w-0">
-              <p className="text-[10px] sm:text-xs text-gray-500 truncate">Total Enrollments</p>
-              <p className="text-lg sm:text-xl font-bold text-orange-600">{stats?.enrollments?.enrolled || 0}</p>
+              <p className="text-[10px] sm:text-xs text-gray-500 truncate">Paid Enrollments</p>
+              <p className="text-lg sm:text-xl font-bold text-green-600">{stats?.enrollments?.enrolled || 0}</p>
             </div>
             <div className="w-8 h-8 sm:w-10 sm:h-10 bg-green-100 rounded-full flex items-center justify-center shrink-0">
               <GraduationCap size={16} className="text-green-600 sm:w-5 sm:h-5" />
@@ -184,42 +191,68 @@ const Dashboard = () => {
 
       {/* Content Grid - Stack on mobile */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-        {/* Recent Enrollments */}
+        {/* Recent Course Enrollments */}
         <div className="bg-white rounded-lg shadow-sm p-3 sm:p-4">
           <div className="flex items-center justify-between mb-3">
-            <h2 className="text-sm font-semibold text-gray-800">Recent Enrollments</h2>
-            <span className="text-xs text-gray-500">{stats?.recentEnrollments?.length || 0} new</span>
+            <h2 className="text-sm font-semibold text-gray-800">Course Enrollments</h2>
+            <span className="text-xs text-gray-500">{stats?.recentActivity?.enrollments?.length || 0} recent</span>
           </div>
-          {stats?.recentEnrollments && stats.recentEnrollments.length > 0 ? (
+          {stats?.recentActivity?.enrollments && stats.recentActivity.enrollments.length > 0 ? (
             <div className="space-y-2">
-              {stats.recentEnrollments.slice(0, 5).map((enrollment) => (
+              {stats.recentActivity.enrollments.slice(0, 2).map((enrollment: any) => (
                 <div key={enrollment._id} className="flex items-center justify-between p-2 sm:p-2.5 bg-gray-50 rounded-lg">
-                  <div className="flex items-center gap-2 sm:gap-2.5 min-w-0 flex-1">
-                    <div className="w-7 h-7 sm:w-8 sm:h-8 bg-green-100 rounded-full flex items-center justify-center shrink-0">
-                      <GraduationCap size={12} className="text-green-600 sm:w-[14px] sm:h-[14px]" />
+                  <div className="flex items-center gap-2 min-w-0 flex-1">
+                    <div className="w-7 h-7 bg-green-100 rounded-full flex items-center justify-center shrink-0">
+                      <GraduationCap size={12} className="text-green-600" />
                     </div>
                     <div className="min-w-0 flex-1">
-                      <p className="text-xs sm:text-sm font-medium text-gray-800 truncate">{enrollment.name}</p>
-                      <p className="text-[10px] sm:text-xs text-gray-500 truncate">{enrollment.course}</p>
+                      <p className="text-xs font-medium text-gray-800 truncate">{enrollment.name}</p>
+                      <p className="text-[10px] text-gray-500 truncate">{enrollment.course}</p>
                     </div>
                   </div>
-                  <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
-                    <span className={`px-1.5 sm:px-2 py-0.5 rounded-full text-[8px] sm:text-[10px] font-medium ${
-                      enrollment.status === "New" ? "bg-orange-100 text-orange-600" :
-                      enrollment.status === "Enrolled" ? "bg-green-100 text-green-600" :
-                      "bg-yellow-100 text-yellow-600"
-                    }`}>
-                      {enrollment.status}
-                    </span>
-                    <span className="text-[10px] text-gray-400 hidden sm:inline">{formatDate(enrollment.createdAt)}</span>
-                  </div>
+                  <span className={`px-1.5 py-0.5 rounded-full text-[8px] font-medium shrink-0 ${enrollment.status === "Paid" ? "bg-green-100 text-green-600" : "bg-orange-100 text-orange-600"}`}>
+                    {enrollment.status}
+                  </span>
                 </div>
               ))}
             </div>
           ) : (
-            <div className="text-center py-6 sm:py-8 text-gray-500">
-              <GraduationCap size={28} className="mx-auto mb-2 text-gray-300 sm:w-8 sm:h-8" />
-              <p className="text-xs sm:text-sm">No recent enrollments</p>
+            <div className="text-center py-6 text-gray-500">
+              <GraduationCap size={28} className="mx-auto mb-2 text-gray-300" />
+              <p className="text-xs">No course enrollments</p>
+            </div>
+          )}
+        </div>
+
+        {/* Recent Internship Enrollments */}
+        <div className="bg-white rounded-lg shadow-sm p-3 sm:p-4">
+          <div className="flex items-center justify-between mb-3">
+            <h2 className="text-sm font-semibold text-gray-800">Internship Enrollments</h2>
+            <span className="text-xs text-gray-500">{stats?.recentActivity?.internshipEnrollments?.length || 0} recent</span>
+          </div>
+          {stats?.recentActivity?.internshipEnrollments && stats.recentActivity.internshipEnrollments.length > 0 ? (
+            <div className="space-y-2">
+              {stats.recentActivity.internshipEnrollments.slice(0, 2).map((enrollment: any) => (
+                <div key={enrollment._id} className="flex items-center justify-between p-2 sm:p-2.5 bg-gray-50 rounded-lg">
+                  <div className="flex items-center gap-2 min-w-0 flex-1">
+                    <div className="w-7 h-7 bg-orange-100 rounded-full flex items-center justify-center shrink-0">
+                      <GraduationCap size={12} className="text-[#FA8128]" />
+                    </div>
+                    <div className="min-w-0 flex-1">
+                      <p className="text-xs font-medium text-gray-800 truncate">{enrollment.name}</p>
+                      <p className="text-[10px] text-gray-500 truncate">{enrollment.program}</p>
+                    </div>
+                  </div>
+                  <span className={`px-1.5 py-0.5 rounded-full text-[8px] font-medium shrink-0 ${enrollment.status === "Paid" ? "bg-green-100 text-green-600" : "bg-orange-100 text-orange-600"}`}>
+                    {enrollment.status}
+                  </span>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="text-center py-6 text-gray-500">
+              <GraduationCap size={28} className="mx-auto mb-2 text-gray-300" />
+              <p className="text-xs">No internship enrollments</p>
             </div>
           )}
         </div>
@@ -228,11 +261,11 @@ const Dashboard = () => {
         <div className="bg-white rounded-lg shadow-sm p-3 sm:p-4">
           <div className="flex items-center justify-between mb-3">
             <h2 className="text-sm font-semibold text-gray-800">Recent Enquiries</h2>
-            <span className="text-xs text-gray-500">{stats?.recentEnquiries?.length || 0} new</span>
+            <span className="text-xs text-gray-500">{stats?.recentActivity?.enquiries?.length || 0} new</span>
           </div>
-          {stats?.recentEnquiries && stats.recentEnquiries.length > 0 ? (
+          {stats?.recentActivity?.enquiries && stats.recentActivity.enquiries.length > 0 ? (
             <div className="space-y-2">
-              {stats.recentEnquiries.slice(0, 5).map((enquiry) => (
+              {stats.recentActivity.enquiries.slice(0, 2).map((enquiry: any) => (
                 <div key={enquiry._id} className="flex items-center justify-between p-2 sm:p-2.5 bg-gray-50 rounded-lg">
                   <div className="flex items-center gap-2 sm:gap-2.5 min-w-0 flex-1">
                     <div className="w-7 h-7 sm:w-8 sm:h-8 bg-purple-100 rounded-full flex items-center justify-center shrink-0">
@@ -260,6 +293,43 @@ const Dashboard = () => {
             <div className="text-center py-6 sm:py-8 text-gray-500">
               <MessageSquare size={28} className="mx-auto mb-2 text-gray-300 sm:w-8 sm:h-8" />
               <p className="text-xs sm:text-sm">No recent enquiries</p>
+            </div>
+          )}
+        </div>
+
+        {/* Recent Callbacks */}
+        <div className="bg-white rounded-lg shadow-sm p-3 sm:p-4">
+          <div className="flex items-center justify-between mb-3">
+            <h2 className="text-sm font-semibold text-gray-800">Recent Callbacks</h2>
+            <span className="text-xs text-gray-500">{stats?.recentActivity?.callbacks?.length || 0} new</span>
+          </div>
+          {stats?.recentActivity?.callbacks && stats.recentActivity.callbacks.length > 0 ? (
+            <div className="space-y-2">
+              {stats.recentActivity.callbacks.slice(0, 2).map((cb: any) => (
+                <div key={cb._id} className="flex items-center justify-between p-2 sm:p-2.5 bg-gray-50 rounded-lg">
+                  <div className="flex items-center gap-2 min-w-0 flex-1">
+                    <div className="w-7 h-7 bg-blue-100 rounded-full flex items-center justify-center shrink-0">
+                      <PhoneCall size={12} className="text-blue-600" />
+                    </div>
+                    <div className="min-w-0 flex-1">
+                      <p className="text-xs font-medium text-gray-800 truncate">{cb.name}</p>
+                      <p className="text-[10px] text-gray-500 truncate">{cb.type || 'General'}</p>
+                    </div>
+                  </div>
+                  <span className={`px-1.5 py-0.5 rounded-full text-[8px] font-medium shrink-0 ${
+                    cb.status === "Completed" ? "bg-green-100 text-green-600" :
+                    cb.status === "Scheduled" ? "bg-yellow-100 text-yellow-600" :
+                    "bg-orange-100 text-orange-600"
+                  }`}>
+                    {cb.status}
+                  </span>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="text-center py-6 text-gray-500">
+              <PhoneCall size={28} className="mx-auto mb-2 text-gray-300" />
+              <p className="text-xs">No recent callbacks</p>
             </div>
           )}
         </div>

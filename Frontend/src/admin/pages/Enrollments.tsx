@@ -75,10 +75,8 @@ const Enrollments = () => {
     }
   };
 
-  const newCount = enrollments.filter((e: Enrollment) => e.status === "New").length;
-  const contactedCount = enrollments.filter((e: Enrollment) => e.status === "Contacted").length;
-  const enrolledCount = enrollments.filter((e: Enrollment) => e.status === "Enrolled").length;
-  const cancelledCount = enrollments.filter((e: Enrollment) => e.status === "Cancelled").length;
+  const unpaidCount = enrollments.filter((e: Enrollment) => e.status === "Unpaid").length;
+  const paidCount = enrollments.filter((e: Enrollment) => e.status === "Paid").length;
 
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('en-IN', {
@@ -92,10 +90,8 @@ const Enrollments = () => {
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case "New": return "bg-orange-100 text-orange-600";
-      case "Contacted": return "bg-yellow-100 text-yellow-600";
-      case "Enrolled": return "bg-green-100 text-green-600";
-      case "Cancelled": return "bg-red-100 text-red-600";
+      case "Paid": return "bg-green-100 text-green-600";
+      case "Unpaid": return "bg-orange-100 text-orange-600";
       default: return "bg-gray-100 text-gray-600";
     }
   };
@@ -109,26 +105,18 @@ const Enrollments = () => {
       </div>
 
       {/* Stats */}
-      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2 sm:gap-3">
+      <div className="grid grid-cols-3 gap-2 sm:gap-3">
         <div className="bg-white rounded-lg p-3 shadow-sm">
           <p className="text-[10px] sm:text-xs text-gray-500">Total</p>
           <p className="text-lg sm:text-xl font-bold text-gray-800">{enrollments.length}</p>
         </div>
         <div className="bg-white rounded-lg p-3 shadow-sm">
-          <p className="text-[10px] sm:text-xs text-gray-500">New</p>
-          <p className="text-lg sm:text-xl font-bold text-orange-600">{newCount}</p>
+          <p className="text-[10px] sm:text-xs text-gray-500">Unpaid</p>
+          <p className="text-lg sm:text-xl font-bold text-orange-600">{unpaidCount}</p>
         </div>
         <div className="bg-white rounded-lg p-3 shadow-sm">
-          <p className="text-[10px] sm:text-xs text-gray-500">Contacted</p>
-          <p className="text-lg sm:text-xl font-bold text-yellow-600">{contactedCount}</p>
-        </div>
-        <div className="bg-white rounded-lg p-3 shadow-sm">
-          <p className="text-[10px] sm:text-xs text-gray-500">Enrolled</p>
-          <p className="text-lg sm:text-xl font-bold text-green-600">{enrolledCount}</p>
-        </div>
-        <div className="bg-white rounded-lg p-3 shadow-sm col-span-2 sm:col-span-1">
-          <p className="text-[10px] sm:text-xs text-gray-500">Cancelled</p>
-          <p className="text-lg sm:text-xl font-bold text-red-600">{cancelledCount}</p>
+          <p className="text-[10px] sm:text-xs text-gray-500">Paid</p>
+          <p className="text-lg sm:text-xl font-bold text-green-600">{paidCount}</p>
         </div>
       </div>
 
@@ -151,10 +139,8 @@ const Enrollments = () => {
             className="px-3 py-1.5 text-sm border border-gray-200 rounded-md text-gray-600 outline-none focus:border-[#FA8128] w-full sm:w-auto"
           >
             <option value="All">All Status</option>
-            <option value="New">New</option>
-            <option value="Contacted">Contacted</option>
-            <option value="Enrolled">Enrolled</option>
-            <option value="Cancelled">Cancelled</option>
+            <option value="Unpaid">Unpaid</option>
+            <option value="Paid">Paid</option>
           </select>
         </div>
       </div>
@@ -190,10 +176,8 @@ const Enrollments = () => {
                           onChange={(e) => handleUpdateStatus(enrollment._id, e.target.value)}
                           className={`px-1.5 py-0.5 rounded-full text-[9px] font-medium border-0 outline-none cursor-pointer ${getStatusColor(enrollment.status)}`}
                         >
-                          <option value="New">New</option>
-                          <option value="Contacted">Contacted</option>
-                          <option value="Enrolled">Enrolled</option>
-                          <option value="Cancelled">Cancelled</option>
+                          <option value="Unpaid">Unpaid</option>
+                          <option value="Paid">Paid</option>
                         </select>
                       </div>
                       <p className="text-xs text-gray-600 mt-0.5 truncate">{enrollment.course}</p>
@@ -272,10 +256,8 @@ const Enrollments = () => {
                           onChange={(e) => handleUpdateStatus(enrollment._id, e.target.value)}
                           className={`px-2 py-0.5 rounded-full text-[10px] font-medium border-0 outline-none cursor-pointer ${getStatusColor(enrollment.status)}`}
                         >
-                          <option value="New">New</option>
-                          <option value="Contacted">Contacted</option>
-                          <option value="Enrolled">Enrolled</option>
-                          <option value="Cancelled">Cancelled</option>
+                          <option value="Unpaid">Unpaid</option>
+                          <option value="Paid">Paid</option>
                         </select>
                       </td>
                       <td className="py-2.5 px-4">

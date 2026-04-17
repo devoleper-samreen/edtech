@@ -1,5 +1,13 @@
 import InternshipProgram from '../models/InternshipProgram.js';
+import InternshipEnrollment from '../models/InternshipEnrollment.js';
 import asyncHandler from '../utils/asyncHandler.js';
+
+const attachEnrolledCount = async (programs) => {
+  return Promise.all(programs.map(async (p) => {
+    const count = await InternshipEnrollment.countDocuments({ program: p.title, status: 'Paid' });
+    return { ...p.toObject(), enrolledCount: count };
+  }));
+};
 
 // @desc    Get all programs (admin)
 // @route   GET /api/internships
@@ -23,11 +31,12 @@ export const getAllPrograms = asyncHandler(async (req, res) => {
     .limit(parseInt(limit));
 
   const total = await InternshipProgram.countDocuments(query);
+  const programsWithCount = await attachEnrolledCount(programs);
 
   res.status(200).json({
     success: true,
     data: {
-      programs,
+      programs: programsWithCount,
       pagination: { page: parseInt(page), limit: parseInt(limit), total, pages: Math.ceil(total / limit) }
     }
   });
@@ -38,7 +47,8 @@ export const getAllPrograms = asyncHandler(async (req, res) => {
 // @access  Public
 export const getActivePrograms = asyncHandler(async (req, res) => {
   const programs = await InternshipProgram.find({ status: 'Active' }).sort({ createdAt: -1 });
-  res.status(200).json({ success: true, data: programs });
+  const programsWithCount = await attachEnrolledCount(programs);
+  res.status(200).json({ success: true, data: programsWithCount });
 });
 
 // @desc    Create program

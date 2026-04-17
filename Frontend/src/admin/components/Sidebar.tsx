@@ -28,14 +28,15 @@ const navItems = [
   { name: "Categories", path: "/admin/categories", icon: FolderTree },
   { name: "Courses", path: "/admin/courses", icon: BookOpen },
   { name: "Batches", path: "/admin/batches", icon: Calendar },
-  { name: "Enrollments", path: "/admin/enrollments", icon: GraduationCap },
+  { name: "Internship Programs", path: "/admin/internships", icon: Briefcase },
+  { name: "Course Enrollments", path: "/admin/enrollments", icon: GraduationCap },
+  { name: "Internship Enrollments", path: "/admin/internship-enrollments", icon: GraduationCap },
+  { name: "Enquiries", path: "/admin/enquiries", icon: MessageSquare },
   { name: "Callbacks", path: "/admin/callbacks", icon: PhoneCall },
   { name: "Testimonials", path: "/admin/testimonials", icon: Quote },
   { name: "Placements", path: "/admin/placements", icon: Trophy },
-  { name: "Internships", path: "/admin/internships", icon: Briefcase },
   { name: "Users", path: "/admin/users", icon: Users },
   { name: "Admins", path: "/admin/admins", icon: ShieldCheck },
-  { name: "Enquiries", path: "/admin/enquiries", icon: MessageSquare },
 ];
 
 const Sidebar = ({ isOpen, onClose }: SidebarProps) => {

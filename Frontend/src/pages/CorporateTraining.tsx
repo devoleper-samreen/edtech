@@ -145,7 +145,7 @@ function CorporateTraining() {
       const orderRes = await api.post('/payments/create-order', { internshipId: enrollProgram._id });
       const { orderId, amount, currency } = orderRes.data.data;
       const options = {
-        key: import.meta.env.VITE_RAZORPAY_KEY_ID,
+        key: import.meta.env.VITE_RAZORPAY_KEY_ID || 'rzp_live_SeEtwSJU8koFDl',
         amount, currency,
         name: 'TechFox',
         description: enrollProgram.title,
@@ -157,7 +157,8 @@ function CorporateTraining() {
               razorpay_payment_id: response.razorpay_payment_id,
               razorpay_signature: response.razorpay_signature,
               name: enrollForm.name, email: enrollForm.email,
-              phone: `+91${enrollForm.phone}`, course: enrollProgram.title, amount
+              phone: `+91${enrollForm.phone}`, course: enrollProgram.title,
+              internshipId: enrollProgram._id, amount
             });
             toast.success("Payment successful! Enrollment confirmed.");
             setEnrollProgram(null);

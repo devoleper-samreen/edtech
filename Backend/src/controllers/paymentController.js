@@ -2,6 +2,7 @@ import Razorpay from 'razorpay';
 import crypto from 'crypto';
 import Course from '../models/Course.js';
 import Enrollment from '../models/Enrollment.js';
+import InternshipEnrollment from '../models/InternshipEnrollment.js';
 import InternshipProgram from '../models/InternshipProgram.js';
 import asyncHandler from '../utils/asyncHandler.js';
 import { sendEnrollmentEmail } from '../utils/emailService.js';
@@ -56,7 +57,7 @@ export const createOrder = asyncHandler(async (req, res) => {
 export const verifyPayment = asyncHandler(async (req, res) => {
   const {
     razorpay_order_id, razorpay_payment_id, razorpay_signature,
-    name, email, phone, course, message, amount
+    name, email, phone, course, internshipId, message, amount
   } = req.body;
 
   const body = razorpay_order_id + '|' + razorpay_payment_id;
@@ -69,13 +70,29 @@ export const verifyPayment = asyncHandler(async (req, res) => {
     return res.status(400).json({ success: false, message: 'Payment verification failed' });
   }
 
-  const enrollment = await Enrollment.create({
-    name, email, phone, course, message: message || '',
-    paymentId: razorpay_payment_id,
-    orderId: razorpay_order_id,
-    paymentStatus: 'Paid',
-    amount: amount / 100
-  });
+  let enrollment;
+
+  if (internshipId) {
+    // Save to InternshipEnrollment
+    enrollment = await InternshipEnrollment.create({
+      name, email, phone, program: course, message: message || '',
+      paymentId: razorpay_payment_id,
+      orderId: razorpay_order_id,
+      paymentStatus: 'Paid',
+      status: 'Paid',
+      amount: amount / 100
+    });
+  } else {
+    // Save to Enrollment (course)
+    enrollment = await Enrollment.create({
+      name, email, phone, course, message: message || '',
+      paymentId: razorpay_payment_id,
+      orderId: razorpay_order_id,
+      paymentStatus: 'Paid',
+      status: 'Paid',
+      amount: amount / 100
+    });
+  }
 
   sendEnrollmentEmail({ name, email, phone, course, message })
     .then(() => console.log('[PAYMENT] Enrollment email sent'))
