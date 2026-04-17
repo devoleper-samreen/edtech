@@ -37,6 +37,7 @@ import MyCourses from "./student/pages/MyCourses";
 import Profile from "./student/pages/Profile";
 import MyEnquiries from "./student/pages/MyEnquiries";
 import MyCallbacks from "./student/pages/MyCallbacks";
+import MyInternships from "./student/pages/MyInternships";
 
 function App() {
   return (
@@ -117,6 +118,7 @@ function App() {
           <Route path="profile" element={<Profile />} />
           <Route path="enquiries" element={<MyEnquiries />} />
           <Route path="callbacks" element={<MyCallbacks />} />
+          <Route path="internships" element={<MyInternships />} />
         </Route>
 
       </Routes>

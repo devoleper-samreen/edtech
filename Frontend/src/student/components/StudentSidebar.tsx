@@ -7,6 +7,7 @@ import {
   User,
   MessageSquare,
   PhoneCall,
+  Briefcase,
   LogOut,
   X,
 } from "lucide-react";
@@ -19,8 +20,9 @@ interface StudentSidebarProps {
 const navItems = [
   { name: "Dashboard", path: "/student", icon: LayoutDashboard },
   { name: "My Courses", path: "/student/courses", icon: BookOpen },
+  { name: "My Internships", path: "/student/internships", icon: Briefcase },
   { name: "My Enquiries", path: "/student/enquiries", icon: MessageSquare },
-  { name: "Callback Requests", path: "/student/callbacks", icon: PhoneCall },
+  { name: "My Callback Requests", path: "/student/callbacks", icon: PhoneCall },
   { name: "Profile", path: "/student/profile", icon: User },
 ];
 

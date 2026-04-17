@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { BookOpen, Calendar } from "lucide-react";
+import { BookOpen, Calendar, Clock, IndianRupee, CheckCircle } from "lucide-react";
 import { studentService } from "../../services/studentService";
 
 interface Enrollment {
@@ -14,6 +14,8 @@ interface Enrollment {
   };
   status: string;
   enrollmentDate: string;
+  validUntil: string;
+  amount: number;
   message: string;
   notes: string;
 }
@@ -82,62 +84,55 @@ const MyCourses = () => {
         ) : (
           <div className="divide-y divide-gray-100">
             {enrollments.map((enrollment) => (
-              <div key={enrollment._id} className="p-3 sm:p-4 hover:bg-gray-50 transition-colors">
-                <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
-                  {/* Course Image */}
-                  <div className="w-full sm:w-28 md:w-32 h-20 sm:h-24 bg-gradient-to-br from-orange-500 to-orange-600 rounded-lg flex items-center justify-center text-white text-xl sm:text-2xl font-bold shrink-0">
-                    {enrollment.course.thumbnail ? (
-                      <img
-                        src={enrollment.course.thumbnail}
-                        alt={enrollment.course.title}
-                        className="w-full h-full object-cover rounded-lg"
-                      />
-                    ) : (
-                      enrollment.course.title?.charAt(0) || "C"
-                    )}
-                  </div>
-
-                  {/* Course Details */}
+              <div key={enrollment._id} className="p-4 sm:p-5 hover:bg-gray-50 transition-colors">
+                <div className="flex items-start gap-4">
+                  {enrollment.course.thumbnail ? (
+                    <img src={enrollment.course.thumbnail} alt={enrollment.course.title} className="w-16 h-16 rounded-xl object-cover flex-shrink-0" />
+                  ) : (
+                    <div className="w-16 h-16 bg-orange-100 rounded-xl flex items-center justify-center flex-shrink-0 text-xl font-bold text-[#FA8128]">
+                      {enrollment.course.title?.charAt(0) || "C"}
+                    </div>
+                  )}
                   <div className="flex-1 min-w-0">
-                    <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-2">
-                      <div className="min-w-0 flex-1">
-                        <h3 className="text-sm font-semibold text-gray-800 line-clamp-1">
-                          {enrollment.course.title}
-                        </h3>
-                        {enrollment.course.description && (
-                          <p className="text-xs text-gray-500 mt-1 line-clamp-2">
-                            {enrollment.course.description}
-                          </p>
-                        )}
-                      </div>
-                      <span className="self-start px-2 py-0.5 text-[10px] font-medium rounded-full bg-green-100 text-green-600 shrink-0">
-                        {enrollment.status}
+                    <div className="flex items-start justify-between gap-2">
+                      <h3 className="font-semibold text-gray-800 text-sm sm:text-base line-clamp-1">{enrollment.course.title}</h3>
+                      <span className="px-2 py-0.5 rounded-full text-[10px] font-medium bg-green-100 text-green-600 shrink-0 flex items-center gap-1">
+                        <CheckCircle size={10} /> {enrollment.status}
                       </span>
                     </div>
-
-                    {/* Enrollment Info */}
-                    <div className="flex flex-wrap items-center gap-2 mt-2 sm:mt-3">
-                      <div className="flex items-center gap-1 text-[10px] sm:text-xs text-gray-500">
-                        <Calendar size={12} />
-                        <span>Enrolled on {formatDate(enrollment.enrollmentDate)}</span>
-                      </div>
+                    {enrollment.course.description && (
+                      <p className="text-xs text-gray-500 mt-1 line-clamp-2">{enrollment.course.description}</p>
+                    )}
+                    <div className="flex flex-wrap gap-2 mt-3">
                       {enrollment.course.duration && (
-                        <span className="px-1.5 sm:px-2 py-0.5 text-[9px] sm:text-[10px] font-medium rounded-full bg-orange-100 text-orange-600">
+                        <div className="flex items-center gap-1.5 text-xs text-gray-600 bg-gray-50 px-2 py-1 rounded-lg">
+                          <Clock size={12} className="text-[#FA8128]" />
                           {enrollment.course.duration}
-                        </span>
+                        </div>
                       )}
-                      {enrollment.course.level && (
-                        <span className="px-1.5 sm:px-2 py-0.5 text-[9px] sm:text-[10px] font-medium rounded-full bg-purple-100 text-purple-600">
-                          {enrollment.course.level}
-                        </span>
+                      {enrollment.amount > 0 && (
+                        <div className="flex items-center gap-1.5 text-xs text-gray-600 bg-gray-50 px-2 py-1 rounded-lg">
+                          <IndianRupee size={12} className="text-[#FA8128]" />
+                          ₹{enrollment.amount.toLocaleString('en-IN')} paid
+                        </div>
+                      )}
+                      {enrollment.enrollmentDate && (
+                        <div className="flex items-center gap-1.5 text-xs text-gray-600 bg-gray-50 px-2 py-1 rounded-lg">
+                          <Calendar size={12} className="text-[#FA8128]" />
+                          Enrolled: {formatDate(enrollment.enrollmentDate)}
+                        </div>
+                      )}
+                      {enrollment.validUntil && (
+                        <div className="flex items-center gap-1.5 text-xs text-green-600 bg-green-50 px-2 py-1 rounded-lg">
+                          <Calendar size={12} />
+                          Valid till {formatDate(enrollment.validUntil)}
+                        </div>
                       )}
                     </div>
-
-                    {/* Notes from admin */}
                     {enrollment.notes && (
-                      <div className="mt-2 sm:mt-3 p-2 bg-gray-50 rounded-md">
-                        <p className="text-[9px] sm:text-[10px] text-gray-400 uppercase mb-0.5 sm:mb-1">Admin Notes</p>
-                        <p className="text-[11px] sm:text-xs text-gray-600">{enrollment.notes}</p>
+                      <div className="mt-3 p-2 bg-gray-50 rounded-md">
+                        <p className="text-[10px] text-gray-400 uppercase mb-1">Admin Notes</p>
+                        <p className="text-xs text-gray-600">{enrollment.notes}</p>
                       </div>
                     )}
                   </div>

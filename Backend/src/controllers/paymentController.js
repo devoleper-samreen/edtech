@@ -12,6 +12,19 @@ const getRazorpay = () => new Razorpay({
   key_secret: process.env.RAZORPAY_KEY_SECRET
 });
 
+const calcValidUntil = (duration) => {
+  if (!duration) return null;
+  const now = new Date();
+  const d = duration.toLowerCase();
+  const num = parseInt(d);
+  if (isNaN(num)) return null;
+  if (d.includes('year')) return new Date(now.setFullYear(now.getFullYear() + num));
+  if (d.includes('month')) return new Date(now.setMonth(now.getMonth() + num));
+  if (d.includes('week')) return new Date(now.setDate(now.getDate() + num * 7));
+  if (d.includes('day')) return new Date(now.setDate(now.getDate() + num));
+  return null;
+};
+
 // @desc    Create Razorpay order (course or internship)
 // @route   POST /api/payments/create-order
 // @access  Public
@@ -73,16 +86,23 @@ export const verifyPayment = asyncHandler(async (req, res) => {
   let enrollment;
 
   if (internshipId) {
-    // Save to InternshipEnrollment
+    const internshipData = await InternshipProgram.findById(internshipId).select('duration');
+    const validUntil = calcValidUntil(internshipData?.duration);
+
     enrollment = await InternshipEnrollment.create({
       name, email, phone, program: course, message: message || '',
       paymentId: razorpay_payment_id,
       orderId: razorpay_order_id,
       paymentStatus: 'Paid',
       status: 'Paid',
-      amount: amount / 100
+      amount: amount / 100,
+      validUntil
     });
   } else {
+    // Calculate validUntil from course duration
+    const courseData = await Course.findOne({ title: course }).select('duration');
+    const validUntil = calcValidUntil(courseData?.duration);
+
     // Save to Enrollment (course)
     enrollment = await Enrollment.create({
       name, email, phone, course, message: message || '',
@@ -90,7 +110,8 @@ export const verifyPayment = asyncHandler(async (req, res) => {
       orderId: razorpay_order_id,
       paymentStatus: 'Paid',
       status: 'Paid',
-      amount: amount / 100
+      amount: amount / 100,
+      validUntil
     });
   }
 

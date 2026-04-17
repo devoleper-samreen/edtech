@@ -3,18 +3,19 @@ import { useNavigate } from "react-router-dom";
 import {
   BookOpen,
   Calendar,
-  CheckCircle,
   MessageSquare,
   ArrowRight,
-  PhoneCall
+  Briefcase
 } from "lucide-react";
 import { studentService } from "../../services/studentService";
+// @ts-ignore
+import api from "../../config/api";
 
 interface DashboardData {
   stats: {
     totalEnrollments: number;
     activeEnrollments: number;
-    completedCourses: number;
+    activeInternships: number;
     pendingEnquiries: number;
   };
   recentEnrollments: Array<{
@@ -41,9 +42,11 @@ const StudentDashboard = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const [dashboardData, setDashboardData] = useState<DashboardData | null>(null);
+  const [internships, setInternships] = useState<any[]>([]);
 
   useEffect(() => {
     fetchDashboard();
+    fetchInternships();
   }, []);
 
   const fetchDashboard = async () => {
@@ -55,6 +58,15 @@ const StudentDashboard = () => {
       console.error("Error fetching dashboard:", error);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const fetchInternships = async () => {
+    try {
+      const response = await api.get('/student/internships');
+      setInternships(response.data.data || []);
+    } catch (error) {
+      console.error("Error fetching internships:", error);
     }
   };
 
@@ -78,7 +90,7 @@ const StudentDashboard = () => {
   const stats = dashboardData?.stats || {
     totalEnrollments: 0,
     activeEnrollments: 0,
-    completedCourses: 0,
+    activeInternships: 0,
     pendingEnquiries: 0
   };
 
@@ -116,14 +128,15 @@ const StudentDashboard = () => {
           </div>
         </div>
 
+
         <div className="bg-white rounded-lg p-3 sm:p-4 shadow-sm border-l-4 border-purple-500">
           <div className="flex items-center justify-between">
             <div className="min-w-0 flex-1">
-              <p className="text-[10px] sm:text-xs text-gray-500 truncate">Completed</p>
-              <p className="text-xl sm:text-2xl font-bold text-gray-800">{stats.completedCourses}</p>
+              <p className="text-[10px] sm:text-xs text-gray-500 truncate">Active Internships</p>
+              <p className="text-xl sm:text-2xl font-bold text-gray-800">{stats.activeInternships}</p>
             </div>
             <div className="w-8 h-8 sm:w-10 sm:h-10 bg-purple-100 rounded-full flex items-center justify-center shrink-0 ml-2">
-              <CheckCircle size={16} className="text-purple-600 sm:w-5 sm:h-5" />
+              <Briefcase size={16} className="text-purple-600 sm:w-5 sm:h-5" />
             </div>
           </div>
         </div>
@@ -190,49 +203,42 @@ const StudentDashboard = () => {
           )}
         </div>
 
-        {/* Recent Callbacks */}
+        {/* Enrolled Internships */}
         <div className="bg-white rounded-lg shadow-sm p-3 sm:p-4">
           <div className="flex items-center justify-between mb-3 sm:mb-4">
-            <h2 className="text-sm font-semibold text-gray-800">Recent Callback Requests</h2>
-            <button
-              onClick={() => navigate("/student/callbacks")}
-              className="text-xs text-[#FA8128] hover:underline flex items-center gap-1"
-            >
+            <h2 className="text-sm font-semibold text-gray-800">Enrolled Internships</h2>
+            <button onClick={() => navigate("/student/internships")}
+              className="text-xs text-[#FA8128] hover:underline flex items-center gap-1">
               View All <ArrowRight size={12} />
             </button>
           </div>
-
-          {dashboardData?.recentCallbacks && dashboardData.recentCallbacks.length > 0 ? (
+          {internships.length > 0 ? (
             <div className="space-y-2 sm:space-y-3">
-              {dashboardData.recentCallbacks.map((callback) => (
-                <div key={callback._id} className="flex items-center gap-2 sm:gap-3 p-2 sm:p-3 bg-gray-50 rounded-lg">
-                  <div className="w-8 h-8 sm:w-10 sm:h-10 bg-orange-100 rounded-full flex items-center justify-center shrink-0">
-                    <PhoneCall size={14} className="text-orange-600 sm:w-[18px] sm:h-[18px]" />
-                  </div>
+              {internships.slice(0, 3).map((item) => (
+                <div key={item._id} className="flex items-center gap-2 sm:gap-3 p-2 sm:p-3 bg-gray-50 rounded-lg">
+                  {item.program?.thumbnail ? (
+                    <img src={item.program.thumbnail} alt={item.program.title} className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg object-cover shrink-0" />
+                  ) : (
+                    <div className="w-8 h-8 sm:w-10 sm:h-10 bg-orange-100 rounded-lg flex items-center justify-center shrink-0">
+                      <Briefcase size={14} className="text-[#FA8128]" />
+                    </div>
+                  )}
                   <div className="flex-1 min-w-0">
-                    <h3 className="text-xs sm:text-sm font-medium text-gray-800 truncate">
-                      {callback.type} Request
-                    </h3>
-                    <p className="text-[10px] sm:text-xs text-gray-500">
-                      {formatDate(callback.createdAt)}
-                    </p>
+                    <h3 className="text-xs sm:text-sm font-medium text-gray-800 truncate">{item.program?.title}</h3>
+                    {item.program?.duration && (
+                      <p className="text-[10px] sm:text-xs text-gray-500">{item.program.duration}</p>
+                    )}
                   </div>
-                  <span className={`px-1.5 sm:px-2 py-0.5 text-[8px] sm:text-[10px] font-medium rounded-full shrink-0 ${
-                    callback.status === "Pending"
-                      ? "bg-yellow-100 text-yellow-600"
-                      : callback.status === "Scheduled"
-                      ? "bg-orange-100 text-orange-600"
-                      : "bg-green-100 text-green-600"
-                  }`}>
-                    {callback.status}
+                  <span className="px-1.5 sm:px-2 py-0.5 text-[8px] sm:text-[10px] font-medium rounded-full bg-green-100 text-green-600 shrink-0">
+                    {item.status}
                   </span>
                 </div>
               ))}
             </div>
           ) : (
             <div className="flex flex-col items-center justify-center py-6 sm:py-8 text-center">
-              <PhoneCall size={28} className="text-gray-300 mb-2 sm:w-8 sm:h-8" />
-              <p className="text-xs sm:text-sm text-gray-500">No callback requests</p>
+              <Briefcase size={28} className="text-gray-300 mb-2 sm:w-8 sm:h-8" />
+              <p className="text-xs sm:text-sm text-gray-500">No internships enrolled</p>
             </div>
           )}
         </div>

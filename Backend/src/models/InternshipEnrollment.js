@@ -19,7 +19,8 @@ const internshipEnrollmentSchema = new mongoose.Schema({
     enum: ['Pending', 'Paid', 'Failed'],
     default: 'Pending'
   },
-  amount: { type: Number, default: 0 }
+  amount: { type: Number, default: 0 },
+  validUntil: { type: Date, default: null }
 }, { timestamps: true });
 
 internshipEnrollmentSchema.index({ status: 1, createdAt: -1 });

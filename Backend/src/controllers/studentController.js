@@ -1,6 +1,8 @@
 import User from '../models/User.js';
 import StudentEnrollment from '../models/StudentEnrollment.js';
 import Enrollment from '../models/Enrollment.js';
+import InternshipEnrollment from '../models/InternshipEnrollment.js';
+import InternshipProgram from '../models/InternshipProgram.js';
 import Enquiry from '../models/Enquiry.js';
 import CallbackRequest from '../models/CallbackRequest.js';
 import Batch from '../models/Batch.js';
@@ -23,11 +25,17 @@ export const getDashboard = asyncHandler(async (req, res) => {
     });
   }
 
-  // Get enrolled courses from Enrollment model (where admin marks as "Enrolled")
+  // Get enrolled courses from Enrollment model (Paid status)
   const enrolledCourses = await Enrollment.find({
     email: user.email,
-    status: 'Enrolled'
+    status: 'Paid'
   }).sort({ createdAt: -1 });
+
+  // Get internship enrollments
+  const enrolledInternships = await InternshipEnrollment.find({
+    email: user.email,
+    status: 'Paid'
+  });
 
   // Get course details for enrolled courses
   const enrollmentsWithDetails = await Promise.all(
@@ -68,7 +76,7 @@ export const getDashboard = asyncHandler(async (req, res) => {
       stats: {
         totalEnrollments: enrolledCourses.length,
         activeEnrollments: enrolledCourses.length,
-        completedCourses: 0,
+        activeInternships: enrolledInternships.length,
         pendingEnquiries: enquiries.filter(e => e.status === 'New').length
       },
       recentEnrollments: enrollmentsWithDetails,
@@ -94,14 +102,14 @@ export const getMyCourses = asyncHandler(async (req, res) => {
     });
   }
 
-  // Fetch from Enrollment model where user's email matches and status is "Enrolled"
+  // Fetch from Enrollment model where user's email matches and status is "Paid"
   let query = { email: user.email };
 
-  // If status filter provided, use it; otherwise default to "Enrolled"
+  // If status filter provided, use it; otherwise default to "Paid"
   if (status && status !== 'All') {
     query.status = status;
   } else {
-    query.status = 'Enrolled';
+    query.status = 'Paid';
   }
 
   const enrollments = await Enrollment.find(query).sort({ createdAt: -1 });
@@ -126,6 +134,8 @@ export const getMyCourses = asyncHandler(async (req, res) => {
         },
         status: enrollment.status,
         enrollmentDate: enrollment.createdAt,
+        validUntil: enrollment.validUntil,
+        amount: enrollment.amount,
         message: enrollment.message,
         notes: enrollment.notes
       };
@@ -367,4 +377,38 @@ export const getCertificate = asyncHandler(async (req, res) => {
       certificateIssuedAt: enrollment.certificateIssuedAt
     }
   });
+});
+
+
+// @desc    Get student's internship enrollments
+// @route   GET /api/student/internships
+// @access  Private/Student
+export const getMyInternships = asyncHandler(async (req, res) => {
+  const user = await User.findById(req.user.id);
+  if (!user) return res.status(404).json({ success: false, message: 'User not found' });
+
+  const enrollments = await InternshipEnrollment.find({
+    email: user.email,
+    status: 'Paid'
+  }).sort({ createdAt: -1 });
+
+  const enrollmentsWithDetails = await Promise.all(
+    enrollments.map(async (e) => {
+      const escapedTitle = e.program.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+      const program = await InternshipProgram.findOne({
+        title: { $regex: new RegExp(escapedTitle, 'i') }
+      }).select('title description duration price thumbnail earlyBirdDeadline');
+
+      return {
+        _id: e._id,
+        program: program || { title: e.program, description: '', duration: '', price: 0, thumbnail: '' },
+        status: e.status,
+        amount: e.amount,
+        enrollmentDate: e.createdAt,
+        validUntil: e.validUntil
+      };
+    })
+  );
+
+  res.status(200).json({ success: true, data: enrollmentsWithDetails });
 });

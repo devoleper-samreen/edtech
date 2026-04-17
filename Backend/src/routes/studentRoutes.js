@@ -5,6 +5,7 @@ import {
   getMyBatches,
   getMyEnquiries,
   getMyCallbacks,
+  getMyInternships,
   getProfile,
   updateProfile,
   changePassword,
@@ -25,6 +26,9 @@ router.get('/courses', getMyCourses);
 
 // Batches
 router.get('/batches', getMyBatches);
+
+// Internship Enrollments
+router.get('/internships', getMyInternships);
 
 // Enquiries
 router.get('/enquiries', getMyEnquiries);
