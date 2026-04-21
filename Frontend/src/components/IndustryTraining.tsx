@@ -7,7 +7,7 @@ function IndustryTraining() {
 
   return (
     <section className="w-full py-12 sm:py-16 md:py-20 bg-gray-50">
-      <div className="w-full max-w-[1100px] mx-auto px-4 sm:px-6">
+      <div className="w-full max-w-[1600px] mx-auto px-4 sm:px-6">
         {/* Content */}
         <div className="flex flex-col lg:flex-row items-center gap-8 lg:gap-12">
           {/* Left Content */}

@@ -55,7 +55,7 @@ const sections = [
 function WhyChooseUs() {
   return (
     <section className="w-full py-12 sm:py-16 md:py-20 bg-white">
-      <div className="w-full max-w-[1100px] mx-auto px-4 sm:px-6">
+      <div className="w-full max-w-[1600px] mx-auto px-4 sm:px-6">
         <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-800 text-center mb-10 sm:mb-12 md:mb-16 italic">
           Why Choose TechFox
         </h2>

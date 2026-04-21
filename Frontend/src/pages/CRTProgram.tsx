@@ -214,7 +214,7 @@ function CRTProgram() {
           <div className="absolute top-0 right-0 w-96 h-96 bg-[#FA8128] opacity-5 rounded-full -translate-y-1/2 translate-x-1/2" />
           <div className="absolute bottom-0 left-0 w-64 h-64 bg-[#FA8128] opacity-5 rounded-full translate-y-1/2 -translate-x-1/2" />
         </div>
-        <div className="max-w-[1280px] mx-auto px-6 sm:px-10 py-8 sm:py-12 relative z-10">
+        <div className="max-w-[1600px] mx-auto px-6 sm:px-10 py-8 sm:py-12 relative z-10">
           <div className="flex flex-col lg:flex-row items-start gap-12">
             {/* Left: Content */}
             <div className="flex-1">
@@ -330,7 +330,7 @@ function CRTProgram() {
 
       {/* The Challenge */}
       <section className="w-full bg-white py-14 sm:py-20">
-        <div className="max-w-[1100px] mx-auto px-4 sm:px-6">
+        <div className="max-w-[1600px] mx-auto px-4 sm:px-6">
           <p className="text-[#FA8128] text-xs font-semibold tracking-widest uppercase mb-3">
             The Challenge
           </p>
@@ -357,7 +357,7 @@ function CRTProgram() {
 
       {/* CRT Training Modules */}
       <section className="w-full bg-orange-50 py-14 sm:py-20">
-        <div className="max-w-[1100px] mx-auto px-4 sm:px-6">
+        <div className="max-w-[1600px] mx-auto px-4 sm:px-6">
           <p className="text-[#FA8128] text-xs font-semibold tracking-widest uppercase mb-3">
             CRT Training Modules
           </p>
@@ -394,7 +394,7 @@ function CRTProgram() {
 
       {/* Technical Training */}
       <section className="w-full bg-white py-14 sm:py-20">
-        <div className="max-w-[1100px] mx-auto px-4 sm:px-6">
+        <div className="max-w-[1600px] mx-auto px-4 sm:px-6">
           <p className="text-[#FA8128] text-xs font-semibold tracking-widest uppercase mb-3">
             Technical Training
           </p>
@@ -431,7 +431,7 @@ function CRTProgram() {
 
       {/* Our Approach */}
       <section className="w-full bg-orange-50 py-14 sm:py-20">
-        <div className="max-w-[1100px] mx-auto px-4 sm:px-6">
+        <div className="max-w-[1600px] mx-auto px-4 sm:px-6">
           <p className="text-[#FA8128] text-xs font-semibold tracking-widest uppercase mb-3">
             Our Approach
           </p>
@@ -469,7 +469,7 @@ function CRTProgram() {
 
       {/* Why Us */}
       <section className="w-full bg-white py-14 sm:py-20">
-        <div className="max-w-[1100px] mx-auto px-4 sm:px-6">
+        <div className="max-w-[1600px] mx-auto px-4 sm:px-6">
           <p className="text-[#FA8128] text-xs font-semibold tracking-widest uppercase mb-3">
             Why Us
           </p>
@@ -496,7 +496,7 @@ function CRTProgram() {
 
       {/* Outcomes */}
       <section className="w-full bg-orange-50 py-14 sm:py-20">
-        <div className="max-w-[1100px] mx-auto px-4 sm:px-6">
+        <div className="max-w-[1600px] mx-auto px-4 sm:px-6">
           <p className="text-[#FA8128] text-xs font-semibold tracking-widest uppercase mb-3">
             Outcomes
           </p>

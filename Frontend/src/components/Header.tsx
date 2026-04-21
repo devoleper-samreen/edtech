@@ -149,7 +149,7 @@ function Header() {
 
       {/* Main Navbar */}
       <nav className="w-full bg-gradient-to-br from-orange-50 via-white to-orange-100 border-b border-orange-100 relative">
-        <div className="max-w-[1280px] mx-auto px-4 md:px-8 flex items-center justify-between py-0">
+        <div className="max-w-[1600px] mx-auto px-4 md:px-8 flex items-center justify-between py-0">
           {/* Logo */}
           <Link to="/" className="flex items-center gap-2">
             <img

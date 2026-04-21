@@ -120,7 +120,7 @@ function HireFromUs() {
           <div className="absolute left-[15%] top-[20%] w-[200px] h-[200px] rounded-full bg-[#fed7aa] opacity-60"></div>
         </div>
 
-        <div className="relative z-10 w-full max-w-[1100px] mx-auto px-4 sm:px-6 py-8 sm:py-10">
+        <div className="relative z-10 w-full max-w-[1600px] mx-auto px-4 sm:px-6 py-8 sm:py-10">
           <div className="grid md:grid-cols-2 gap-8 sm:gap-10 md:gap-12 items-start">
             {/* LEFT TEXT SECTION */}
             <motion.div
@@ -280,7 +280,7 @@ function HireFromUs() {
           Find our talents in different Domains
         </h2>
 
-        <div className="w-full max-w-[1100px] mx-auto px-4 sm:px-6">
+        <div className="w-full max-w-[1600px] mx-auto px-4 sm:px-6">
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
             {domains.map((domain, index) => (
               <div

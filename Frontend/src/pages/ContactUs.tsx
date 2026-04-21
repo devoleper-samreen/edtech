@@ -109,7 +109,7 @@ function ContactUs() {
         </div>
 
         {/* Content */}
-        <div className="relative z-10 w-full max-w-[1100px] mx-auto px-3 sm:px-6 pt-8 sm:pt-10 pb-16 sm:pb-20">
+        <div className="relative z-10 w-full max-w-[1600px] mx-auto px-3 sm:px-6 pt-8 sm:pt-10 pb-16 sm:pb-20">
           {/* Header Text */}
           <motion.div
             className="text-center mb-8 sm:mb-10"

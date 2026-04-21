@@ -295,7 +295,7 @@ function CorporateTraining() {
         {/* Background gradient */}
         <div className="absolute inset-0 bg-gradient-to-r from-[#fef3e2] via-[#fef9f3] to-white"></div>
 
-        <div className="relative z-10 w-full max-w-[1100px] mx-auto px-4 sm:px-6 py-8 sm:py-10">
+        <div className="relative z-10 w-full max-w-[1600px] mx-auto px-4 sm:px-6 py-8 sm:py-10">
           <div className="grid md:grid-cols-2 gap-8 sm:gap-10 md:gap-12 items-center">
             {/* LEFT TEXT SECTION */}
             <motion.div
@@ -415,7 +415,7 @@ function CorporateTraining() {
 
       {/* Program Overview */}
       <section id="program-overview" className="w-full py-12 sm:py-16 bg-white">
-        <div className="w-full max-w-[1100px] mx-auto px-4 sm:px-6">
+        <div className="w-full max-w-[1600px] mx-auto px-4 sm:px-6">
           <motion.div
             className="text-center mb-10"
             initial={{ opacity: 0, y: 20 }}
@@ -609,7 +609,7 @@ function CorporateTraining() {
           Internship Programs
         </h2>
 
-        <div className="w-full max-w-[1100px] mx-auto px-6">
+        <div className="w-full max-w-[1600px] mx-auto px-6">
           {programsLoading ? (
             <div className="flex flex-col items-center justify-center py-12">
               <div className="w-10 h-10 border-4 border-[#FA8128] border-t-transparent rounded-full animate-spin"></div>
@@ -701,7 +701,7 @@ function CorporateTraining() {
           </svg>
         </div>
 
-        <div className="relative z-10 w-full max-w-[1100px] mx-auto px-4 sm:px-6">
+        <div className="relative z-10 w-full max-w-[1600px] mx-auto px-4 sm:px-6">
           {/* Center Globe/Logo - Hidden on mobile, visible on large screens */}
           <div className="hidden lg:block absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-20">
             <div className="w-[140px] h-[140px] xl:w-[160px] xl:h-[160px] rounded-full bg-gradient-to-br from-orange-100 to-orange-50 border-2 border-orange-200 flex items-center justify-center shadow-xl">
@@ -804,7 +804,7 @@ function CorporateTraining() {
           Intern Testimonials
         </h2>
 
-        <div className="relative w-full max-w-[1100px] mx-auto px-6">
+        <div className="relative w-full max-w-[1600px] mx-auto px-6">
           {testimonialsLoading ? (
             <div className="flex flex-col items-center justify-center py-12">
               <div className="w-10 h-10 border-4 border-[#FA8128] border-t-transparent rounded-full animate-spin"></div>

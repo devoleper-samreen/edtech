@@ -53,7 +53,7 @@ function ModesWeTrain() {
         </svg>
       </div>
 
-      <div className="w-full max-w-[1180px] mx-auto px-4 sm:px-6 relative z-10">
+      <div className="w-full max-w-[1600px] mx-auto px-4 sm:px-6 relative z-10">
         {/* Section Header */}
         <div className="text-center mb-8 sm:mb-10 md:mb-12">
           <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-800 italic">

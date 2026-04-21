@@ -98,7 +98,7 @@ function Courses() {
 
       {/* Hero Section */}
       <section className="w-full bg-gradient-to-br from-orange-50 via-white to-orange-100 py-10 sm:py-12 md:py-16">
-        <div className="w-full max-w-[1180px] mx-auto px-4 sm:px-6 text-center">
+        <div className="w-full max-w-[1600px] mx-auto px-4 sm:px-6 text-center">
           <motion.h1
             className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-gray-800 mb-3 sm:mb-4"
             initial={{ opacity: 0, y: -20 }}
@@ -137,7 +137,7 @@ function Courses() {
 
       {/* Main Content */}
       <section className="w-full py-8 sm:py-10 md:py-12 bg-white">
-        <div className="w-full max-w-[1180px] mx-auto px-4 sm:px-6">
+        <div className="w-full max-w-[1600px] mx-auto px-4 sm:px-6">
           {/* Category Filters */}
           <div className="flex flex-wrap gap-2 sm:gap-3 mb-6 sm:mb-8 md:mb-10 justify-center">
             <button

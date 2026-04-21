@@ -29,7 +29,7 @@ function Footer() {
       transition={{ duration: 0.5 }}
       viewport={{ once: true }}
     >
-      <div className="w-full max-w-[1100px] mx-auto px-4 sm:px-6">
+      <div className="w-full max-w-[1600px] mx-auto px-4 sm:px-6">
         <div className="flex items-end justify-between">
           {/* Fox Mascot - Left */}
           <img

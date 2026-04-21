@@ -1,12 +1,12 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import CallbackModal from "./CallbackModal";
-//className='max-w-[1180px] w-full mx-auto'
+//className='max-w-[1600px] w-full mx-auto'
 
 function Hero() {
   const [isCallbackOpen, setIsCallbackOpen] = useState(false);
   return (
-    <section className="w-full bg-gradient-to-br from-orange-50 via-white to-orange-100 relative overflow-hidden" ><div className="max-w-[1280px] mx-auto px-4 sm:px-6 md:px-10 lg:px-12 pt-4 pb-16 sm:pb-20">
+    <section className="w-full bg-gradient-to-br from-orange-50 via-white to-orange-100 relative overflow-hidden" ><div className="max-w-[1600px] mx-auto px-4 sm:px-6 md:px-10 lg:px-12 pt-4 pb-16 sm:pb-20">
       {/* Background decorative circles */}
       <div className="absolute top-20 left-10 w-64 h-64 bg-orange-200/30 rounded-full blur-3xl"></div>
       <div className="absolute bottom-20 right-10 w-80 h-80 bg-orange-300/20 rounded-full blur-3xl"></div>
@@ -94,7 +94,7 @@ function Hero() {
             <img
               src="/techfox_transparent2.png"
               alt="Software Training Mind Map"
-              className="w-full h-auto object-contain"
+              className="w-full max-w-[580px] lg:max-w-[640px] h-auto object-contain"
             />
           </motion.div>
         </div>

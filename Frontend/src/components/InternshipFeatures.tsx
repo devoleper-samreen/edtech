@@ -82,7 +82,7 @@ const features = [
 
 function InternshipFeatures() {
   return (
-    <section className="max-w-[1280px] mx-auto w-full py-12 sm:py-16 bg-white relative overflow-hidden">
+    <section className="max-w-[1600px] mx-auto w-full py-12 sm:py-16 bg-white relative overflow-hidden">
       <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-center text-gray-800 mb-10 sm:mb-16 px-4">
         TechFox Summer Internship Features
       </h2>
@@ -111,7 +111,7 @@ function InternshipFeatures() {
         </svg>
       </div>
 
-      <div className="relative z-10 w-full max-w-[1100px] mx-auto px-4 sm:px-6">
+      <div className="relative z-10 w-full max-w-[1600px] mx-auto px-4 sm:px-6">
         {/* Center Logo */}
         <div className="hidden lg:block absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-20">
           <div className="w-[140px] h-[140px] xl:w-[160px] xl:h-[160px] rounded-full bg-gradient-to-br from-orange-100 to-orange-50 border-2 border-orange-200 flex items-center justify-center shadow-xl">
@@ -124,7 +124,7 @@ function InternshipFeatures() {
         </div>
 
         {/* Features Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-4 sm:gap-5 lg:gap-x-[180px] xl:gap-x-[200px] relative lg:min-h-[500px]">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-4 sm:gap-5 lg:gap-x-[180px] xl:gap-x-[220px] 2xl:gap-x-[280px] relative lg:min-h-[500px]">
           {/* Mobile/Tablet */}
           <div className="lg:hidden grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-5 col-span-full">
             {features.map((feature, index) => (
@@ -148,7 +148,7 @@ function InternshipFeatures() {
             {features.filter((_, i) => i % 2 === 0).map((feature, index) => (
               <div
                 key={index}
-                className={`bg-white rounded-2xl shadow-lg hover:shadow-xl p-5 w-full max-w-[280px] xl:max-w-[300px] border border-gray-100 transition-all duration-300 hover:-translate-y-1 hover:border-[#FA8128]/30 ${
+                className={`bg-white rounded-2xl shadow-lg hover:shadow-xl p-5 w-full max-w-[320px] xl:max-w-[380px] 2xl:max-w-[420px] border border-gray-100 transition-all duration-300 hover:-translate-y-1 hover:border-[#FA8128]/30 ${
                   index === 0 ? 'mr-8' : index === 1 ? 'mr-0' : 'mr-16'
                 }`}
               >
@@ -168,7 +168,7 @@ function InternshipFeatures() {
             {features.filter((_, i) => i % 2 === 1).map((feature, index) => (
               <div
                 key={index}
-                className={`bg-white rounded-2xl shadow-lg hover:shadow-xl p-5 w-full max-w-[280px] xl:max-w-[300px] border border-gray-100 transition-all duration-300 hover:-translate-y-1 hover:border-[#FA8128]/30 ${
+                className={`bg-white rounded-2xl shadow-lg hover:shadow-xl p-5 w-full max-w-[320px] xl:max-w-[380px] 2xl:max-w-[420px] border border-gray-100 transition-all duration-300 hover:-translate-y-1 hover:border-[#FA8128]/30 ${
                   index === 0 ? 'ml-16' : index === 1 ? 'ml-0' : 'ml-8'
                 }`}
               >

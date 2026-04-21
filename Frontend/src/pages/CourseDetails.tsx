@@ -183,7 +183,7 @@ function CourseDetails() {
 
       {/* Hero Section */}
       <section className="w-full bg-[#fef7f0]">
-        <div className="w-full max-w-[1100px] mx-auto px-6 py-12">
+        <div className="w-full max-w-[1600px] mx-auto px-6 py-12">
           <div className="flex flex-col lg:flex-row gap-8 items-start">
             {/* Left Content */}
             <motion.div
@@ -273,8 +273,8 @@ function CourseDetails() {
       </section>
 
       {/* Upcoming Batches Section */}
-      <section className="max-w-[1280px] mx-auto w-full py-12 bg-white">
-        <div className="w-full max-w-[1100px] mx-auto px-6">
+      <section className="max-w-[1600px] mx-auto w-full py-12 bg-white">
+        <div className="w-full max-w-[1600px] mx-auto px-6">
           <h2 className="text-2xl font-bold text-gray-800 mb-6">Upcoming Batches</h2>
 
           {/* Batch Table */}
@@ -340,8 +340,8 @@ function CourseDetails() {
 
       {/* Our Placements Section */}
       {showPlacements &&
-      <section className="max-w-[1280px] mx-auto w-full py-12 bg-white">
-        <div className="w-full max-w-[1100px] mx-auto px-6">
+      <section className="max-w-[1600px] mx-auto w-full py-12 bg-white">
+        <div className="w-full max-w-[1600px] mx-auto px-6">
           <motion.h2
             className="text-2xl font-bold text-gray-800 mb-8"
             initial={{ opacity: 0, y: -10 }}
@@ -421,7 +421,7 @@ function CourseDetails() {
 
       {/* Highlights about the Course */}
       <section className="w-full py-12 bg-gray-50">
-        <div className="w-full max-w-[1100px] mx-auto px-6">
+        <div className="w-full max-w-[1600px] mx-auto px-6">
           <motion.h2
             className="text-2xl font-bold text-gray-800 mb-8"
             initial={{ opacity: 0, y: -10 }}

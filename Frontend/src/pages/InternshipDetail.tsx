@@ -133,7 +133,7 @@ function InternshipDetail() {
       <section className="w-full bg-gradient-to-br from-orange-50 via-white to-orange-100 relative overflow-hidden">
         <div className="absolute top-0 right-0 w-96 h-96 bg-[#FA8128] opacity-5 rounded-full -translate-y-1/2 translate-x-1/2"></div>
         <div className="absolute bottom-0 left-0 w-64 h-64 bg-[#FA8128] opacity-5 rounded-full translate-y-1/2 -translate-x-1/2"></div>
-        <div className="max-w-[1100px] mx-auto px-4 sm:px-6 py-6 sm:py-8 relative z-10">
+        <div className="max-w-[1600px] mx-auto px-4 sm:px-6 py-6 sm:py-8 relative z-10">
           <button onClick={() => navigate('/summer-internship')} className="flex items-center gap-2 text-sm text-gray-500 hover:text-[#FA8128] mb-5 transition-colors">
             <ArrowLeft size={16} /> Back to Internships
           </button>
@@ -197,7 +197,7 @@ function InternshipDetail() {
 
       {/* Domains + Benefits */}
       <section className="w-full py-12 sm:py-16 bg-white">
-        <div className="max-w-[1100px] mx-auto px-4 sm:px-6">
+        <div className="max-w-[1600px] mx-auto px-4 sm:px-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
 
             {/* Domains */}
@@ -241,7 +241,7 @@ function InternshipDetail() {
 
       {/* Benefits of Internship */}
       <section className="w-full py-12 sm:py-16 bg-gray-50">
-        <div className="max-w-[1100px] mx-auto px-4 sm:px-6">
+        <div className="max-w-[1600px] mx-auto px-4 sm:px-6">
           <motion.div
             initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }} viewport={{ once: true }}
             className="text-center mb-10"
@@ -267,7 +267,7 @@ function InternshipDetail() {
 
       {/* CTA + Contact */}
       <section className="w-full py-12 bg-orange-50 border-t border-orange-100">
-        <div className="max-w-[1100px] mx-auto px-4 sm:px-6">
+        <div className="max-w-[1600px] mx-auto px-4 sm:px-6">
           <div className="flex flex-col md:flex-row items-center justify-between gap-8">
             <div>
               {program.earlyBirdDeadline && (

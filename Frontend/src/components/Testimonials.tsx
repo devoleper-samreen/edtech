@@ -48,7 +48,7 @@ function Testimonials() {
   return (
     <>
       <section className="w-full py-12 sm:py-14 md:py-16 bg-gray-50">
-        <div className="max-w-[1180px] mx-auto px-4 sm:px-6">
+        <div className="max-w-[1600px] mx-auto px-4 sm:px-6">
           <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-center text-gray-800 mb-3 sm:mb-4">
             What Our Clients Say
           </h2>

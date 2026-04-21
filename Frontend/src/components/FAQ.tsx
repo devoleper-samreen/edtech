@@ -34,7 +34,7 @@ function FAQ() {
 
   return (
     <section className="w-full py-12 sm:py-16 md:py-20 bg-white">
-      <div className="w-full max-w-[1100px] mx-auto px-4 sm:px-6">
+      <div className="w-full max-w-[1600px] mx-auto px-4 sm:px-6">
         {/* Header */}
         <div className="mb-8 sm:mb-10">
           <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-800 mb-2">
