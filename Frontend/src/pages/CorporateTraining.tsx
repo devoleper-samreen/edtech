@@ -221,7 +221,7 @@ function CorporateTraining() {
         message: formData.message.trim()
       });
 
-      toast.success("Request submitted successfully! We will contact you soon.");
+      toast.success("Request submitted successfully! Redirecting to payment...");
       setFormData({
         name: "",
         email: "",
@@ -229,6 +229,7 @@ function CorporateTraining() {
         requiredTraining: "",
         message: ""
       });
+      window.open("https://rzp.io/rzp/rBt2q7M", "_blank");
     } catch (error) {
       console.error("Error submitting form:", error);
       toast.error("Failed to submit request. Please try again.");

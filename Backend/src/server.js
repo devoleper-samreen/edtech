@@ -14,7 +14,11 @@ connectDB();
 
 // Middleware
 const allowedOrigins = [
-  process.env.CLIENT_URL?.replace(/\/$/, '')
+  process.env.CLIENT_URL?.replace(/\/$/, ''),
+  process.env.CLIENT_URL_2?.replace(/\/$/, ''),
+  'https://edtech-phi-seven.vercel.app',
+  'https://www.techfox.co',
+  'https://techfox.co'
 ].filter(Boolean);
 
 app.use(cors({
