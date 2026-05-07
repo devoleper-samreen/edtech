@@ -110,3 +110,30 @@ export const sendCallbackEmail = async ({ name, email, phone, type, company, req
 
   console.error('[EMAIL] Callback email sent!');
 };
+
+// Password reset email — sent to user
+export const sendPasswordResetEmail = async ({ email, resetUrl }) => {
+  await getResend().emails.send({
+    from: 'TechFox <onboarding@resend.dev>',
+    to: email,
+    subject: 'Reset Your TechFox Password',
+    html: `
+      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; background: #fff; border: 1px solid #eee; border-radius: 8px; overflow: hidden;">
+        <div style="background: #FA8128; padding: 24px 32px;">
+          <h1 style="color: #fff; margin: 0; font-size: 22px;">TechFox — Password Reset</h1>
+        </div>
+        <div style="padding: 32px;">
+          <p style="color: #374151; font-size: 15px;">You requested to reset your password. Click the button below to set a new password:</p>
+          <div style="text-align: center; margin: 32px 0;">
+            <a href="${resetUrl}" style="background: #FA8128; color: #fff; padding: 14px 32px; border-radius: 8px; text-decoration: none; font-size: 15px; font-weight: 600; display: inline-block;">Reset Password</a>
+          </div>
+          <p style="color: #6b7280; font-size: 13px;">This link will expire in <strong>15 minutes</strong>. If you did not request a password reset, please ignore this email.</p>
+          <p style="color: #6b7280; font-size: 12px; margin-top: 24px;">Or copy this link: <a href="${resetUrl}" style="color: #FA8128;">${resetUrl}</a></p>
+        </div>
+        <div style="background: #f9fafb; padding: 14px 32px; text-align: center; border-top: 1px solid #eee;">
+          <p style="color: #9ca3af; font-size: 12px; margin: 0;">© 2026 TechFox. All Rights Reserved.</p>
+        </div>
+      </div>
+    `,
+  });
+};

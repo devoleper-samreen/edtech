@@ -1,5 +1,7 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
+// @ts-ignore
+import { useAuth } from "../context/AuthContext";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   ArrowLeft, Clock, IndianRupee, GraduationCap, X,
@@ -7,6 +9,7 @@ import {
 } from "lucide-react";
 import toast from "react-hot-toast";
 import Header from "../components/Header";
+import PaymentSuccessModal from "../components/PaymentSuccessModal";
 import Footer from "../components/Footer";
 // @ts-ignore
 import { internshipService } from "../services/internshipService";
@@ -46,11 +49,14 @@ const perks = [
 function InternshipDetail() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const { user } = useAuth();
   const [program, setProgram] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [formData, setFormData] = useState({ name: "", email: "", phone: "" });
+  const [paymentSuccess, setPaymentSuccess] = useState(false);
+  const [paidCourseName, setPaidCourseName] = useState("");
 
   useEffect(() => { fetchProgram(); }, [id]);
 
@@ -89,9 +95,10 @@ function InternshipDetail() {
               phone: `+91${formData.phone}`, course: program.title,
               internshipId: program._id, amount
             });
-            toast.success("Payment successful! Enrollment confirmed.");
+            setPaidCourseName(program?.title || "");
             setIsModalOpen(false);
             setFormData({ name: "", email: "", phone: "" });
+            setPaymentSuccess(true);
           } catch { toast.error("Payment done but enrollment failed. Please contact support."); }
         },
         prefill: { name: formData.name, email: formData.email, contact: `+91${formData.phone}` },
@@ -127,6 +134,7 @@ function InternshipDetail() {
 
   return (
     <>
+      <PaymentSuccessModal isOpen={paymentSuccess} onClose={() => setPaymentSuccess(false)} courseName={paidCourseName} />
       <Header />
 
       {/* Hero */}
@@ -171,7 +179,7 @@ function InternshipDetail() {
               </div>
 
               <motion.button
-                onClick={() => setIsModalOpen(true)}
+                onClick={() => { if (!user) { toast.error("Please login to enroll"); navigate("/login"); return; } setIsModalOpen(true); }}
                 className="bg-[#FA8128] hover:bg-orange-600 text-white font-bold py-3 px-10 rounded-lg transition-colors text-sm"
                 whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}
               >
@@ -286,7 +294,7 @@ function InternshipDetail() {
               </div>
             </div>
             <motion.button
-              onClick={() => setIsModalOpen(true)}
+              onClick={() => { if (!user) { toast.error("Please login to enroll"); navigate("/login"); return; } setIsModalOpen(true); }}
               className="bg-[#FA8128] hover:bg-orange-600 text-white font-bold py-4 px-12 rounded-xl transition-colors text-base whitespace-nowrap"
               whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}
             >

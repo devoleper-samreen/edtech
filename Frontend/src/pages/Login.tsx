@@ -133,7 +133,7 @@ const Login = () => {
             </motion.div>
 
             <motion.div
-              className="flex items-center text-xs sm:text-sm"
+              className="flex items-center justify-between text-xs sm:text-sm"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ duration: 0.4, delay: 0.5 }}
@@ -147,6 +147,9 @@ const Login = () => {
                 />
                 <span className="ml-1.5 sm:ml-2 text-gray-600">Remember me</span>
               </label>
+              <Link to="/forgot-password" className="text-xs sm:text-sm text-[#FA8128] hover:underline">
+                Forgot Password?
+              </Link>
             </motion.div>
 
             <motion.button

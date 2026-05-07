@@ -7,6 +7,9 @@ import EnrollModal from "./EnrollModal";
 import { courseService } from "../services/courseService";
 // @ts-ignore
 import { categoryService } from "../services/categoryService";
+// @ts-ignore
+import { useAuth } from "../context/AuthContext";
+import toast from "react-hot-toast";
 
 interface Course {
   _id: string;
@@ -36,6 +39,7 @@ function ExploreCourses() {
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
+  const { user } = useAuth();
 
   useEffect(() => {
     fetchData();
@@ -65,6 +69,11 @@ function ExploreCourses() {
 
   const handleEnrollClick = (e: React.MouseEvent, courseTitle: string) => {
     e.stopPropagation();
+    if (!user) {
+      toast.error("Please login to enroll in a course");
+      navigate("/login");
+      return;
+    }
     setSelectedCourse(courseTitle);
     setIsEnrollOpen(true);
   };

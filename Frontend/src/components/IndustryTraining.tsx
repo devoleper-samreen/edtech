@@ -67,7 +67,6 @@ function IndustryTraining() {
           <CallbackModal
             isOpen={isCallbackOpen}
             onClose={() => setIsCallbackOpen(false)}
-            defaultTab="corporate"
           />
 
           {/* Right Image */}

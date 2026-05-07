@@ -6,6 +6,8 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import Home from "./pages/Home";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
+import ForgotPassword from "./pages/ForgotPassword";
+import ResetPassword from "./pages/ResetPassword";
 import ContactUs from "./pages/ContactUs";
 import HireFromUs from "./pages/HireFromUs";
 import CorporateTraining from "./pages/CorporateTraining";
@@ -28,6 +30,8 @@ import Testimonials from "./admin/pages/Testimonials";
 import Placements from "./admin/pages/Placements";
 import InternshipPrograms from "./admin/pages/InternshipPrograms";
 import InternshipEnrollments from "./admin/pages/InternshipEnrollments";
+import HiringPartnersAdmin from "./admin/pages/HiringPartners";
+import SiteSettings from "./admin/pages/SiteSettings";
 import InternshipDetail from "./pages/InternshipDetail";
 
 // Student Imports
@@ -72,6 +76,8 @@ function App() {
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
+        <Route path="/forgot-password" element={<ForgotPassword />} />
+        <Route path="/reset-password" element={<ResetPassword />} />
         <Route path="/contact-us" element={<ContactUs />} />
         <Route path="/hire-from-us" element={<HireFromUs />} />
         <Route path="/summer-internship" element={<CorporateTraining />} />
@@ -102,6 +108,8 @@ function App() {
           <Route path="internship-enrollments" element={<InternshipEnrollments />} />
           <Route path="users" element={<Users />} />
           <Route path="admins" element={<Admins />} />
+          <Route path="hiring-partners" element={<HiringPartnersAdmin />} />
+          <Route path="site-settings" element={<SiteSettings />} />
         </Route>
 
         {/* Student Routes - Protected */}

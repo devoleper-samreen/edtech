@@ -9,6 +9,8 @@ import { courseService } from "../services/courseService";
 import { categoryService } from "../services/categoryService";
 // @ts-ignore
 import { authService } from "../services/authService";
+// @ts-ignore
+import api from "../config/api";
 
 
 interface Course {
@@ -49,10 +51,14 @@ function Header() {
   const [activeCategory, setActiveCategory] = useState<string | null>("all");
   const [courses, setCourses] = useState<Course[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
+  const [logoUrl, setLogoUrl] = useState<string | null>(null);
   const profileRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     fetchData();
+    api.get("/settings/site_logo").then((res: any) => {
+      if (res.data.data) setLogoUrl(res.data.data);
+    }).catch(() => {});
   }, []);
 
   useEffect(() => {
@@ -153,7 +159,7 @@ function Header() {
           {/* Logo */}
           <Link to="/" className="flex items-center gap-2">
             <img
-              src="/techfox_logo_transparent.png"
+              src={logoUrl || "/techfox_logo_transparent.png"}
               alt="TechFox"
               className="h-20 sm:h-24 w-auto object-contain"
             />

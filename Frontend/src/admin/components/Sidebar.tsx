@@ -15,6 +15,8 @@ import {
   Quote,
   Trophy,
   Briefcase,
+  Building2,
+  Settings,
   X,
 } from "lucide-react";
 
@@ -35,8 +37,10 @@ const navItems = [
   { name: "Callbacks", path: "/admin/callbacks", icon: PhoneCall },
   { name: "Testimonials", path: "/admin/testimonials", icon: Quote },
   { name: "Placements", path: "/admin/placements", icon: Trophy },
+  { name: "Hiring Partners", path: "/admin/hiring-partners", icon: Building2 },
   { name: "Users", path: "/admin/users", icon: Users },
   { name: "Admins", path: "/admin/admins", icon: ShieldCheck },
+  { name: "Site Settings", path: "/admin/site-settings", icon: Settings },
 ];
 
 const Sidebar = ({ isOpen, onClose }: SidebarProps) => {

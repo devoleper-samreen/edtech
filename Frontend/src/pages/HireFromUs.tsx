@@ -170,7 +170,7 @@ function HireFromUs() {
 
                   <div className="flex items-center gap-2">
                     <Mail size={16} className="text-blue-600" />
-                    <span>dileepkumar914491@gmail.com</span>
+                    <span>team@techfox.co</span>
                   </div>
                 </div>
               </motion.div>

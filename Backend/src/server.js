@@ -52,6 +52,7 @@ import paymentRoutes from './routes/paymentRoutes.js';
 import internshipRoutes from './routes/internshipRoutes.js';
 import internshipEnrollmentRoutes from './routes/internshipEnrollmentRoutes.js';
 import uploadRoutes from './routes/uploadRoutes.js';
+import hiringPartnerRoutes from './routes/hiringPartnerRoutes.js';
 
 // API Routes
 app.get('/', (req, res) => {
@@ -91,6 +92,7 @@ app.use('/api/payments', paymentRoutes);
 app.use('/api/internships', internshipRoutes);
 app.use('/api/internship-enrollments', internshipEnrollmentRoutes);
 app.use('/api/upload', uploadRoutes);
+app.use('/api/hiring-partners', hiringPartnerRoutes);
 
 // Error handling middleware
 app.use((err, req, res, next) => {

@@ -1,4 +1,4 @@
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Star, CheckCircle, Instagram, Calendar, Linkedin } from "lucide-react";
@@ -13,6 +13,9 @@ import { courseService } from "../services/courseService";
 import { batchService } from "../services/batchService";
 // @ts-ignore
 import { placementService } from "../services/placementService";
+// @ts-ignore
+import { useAuth } from "../context/AuthContext";
+import toast from "react-hot-toast";
 
 interface BatchData {
   _id: string;
@@ -82,6 +85,8 @@ const defaultWhatLearn = [
 
 function CourseDetails() {
   const { id } = useParams<{ id: string }>();
+  const navigate = useNavigate();
+  const { user } = useAuth();
   const [isEnrollOpen, setIsEnrollOpen] = useState(false);
   const [course, setCourse] = useState<CourseData | null>(null);
   const [batches, setBatches] = useState<BatchData[]>([]);
@@ -232,7 +237,7 @@ function CourseDetails() {
 
               {/* CTA Button */}
               <motion.button
-                onClick={() => setIsEnrollOpen(true)}
+                onClick={() => { if (!user) { toast.error("Please login to enroll in a course"); navigate("/login"); return; } setIsEnrollOpen(true); }}
                 className="bg-[#FA8128] hover:bg-[#FA8128] text-white font-semibold py-3 px-8 rounded-lg transition-colors"
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -240,7 +245,7 @@ function CourseDetails() {
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
               >
-                Enroll For Demo Class
+                Enroll For Course
               </motion.button>
             </motion.div>
 
@@ -320,7 +325,7 @@ function CourseDetails() {
                       <td className="py-3 px-4 text-sm text-gray-600">{batch.days}</td>
                       <td className="py-3 px-4">
                         <button
-                          onClick={() => setIsEnrollOpen(true)}
+                          onClick={() => { if (!user) { toast.error("Please login to enroll in a course"); navigate("/login"); return; } setIsEnrollOpen(true); }}
                           className="border border-[#FA8128] text-[#FA8128] hover:bg-orange-50 text-xs font-medium py-1.5 px-4 rounded-full transition-colors"
                         >
                           Enroll Now

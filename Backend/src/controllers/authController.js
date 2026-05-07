@@ -1,7 +1,9 @@
+import crypto from 'crypto';
 import User from '../models/User.js';
 import asyncHandler from '../utils/asyncHandler.js';
 import generateToken from '../utils/generateToken.js';
 import { hashPassword, comparePassword } from '../utils/hashPassword.js';
+import { sendPasswordResetEmail } from '../utils/emailService.js';
 
 // @desc    Register a new user (Student only)
 // @route   POST /api/auth/register
@@ -196,4 +198,57 @@ export const updatePassword = asyncHandler(async (req, res) => {
     success: true,
     message: 'Password updated successfully'
   });
+});
+
+// @desc    Forgot password - send reset email
+// @route   POST /api/auth/forgot-password
+// @access  Public
+export const forgotPassword = asyncHandler(async (req, res) => {
+  const { email } = req.body;
+  if (!email) return res.status(400).json({ success: false, message: 'Please provide your email' });
+
+  const user = await User.findOne({ email: email.toLowerCase().trim() });
+  if (!user) return res.status(404).json({ success: false, message: 'No account found with this email' });
+
+  const resetToken = crypto.randomBytes(32).toString('hex');
+  user.resetPasswordToken = crypto.createHash('sha256').update(resetToken).digest('hex');
+  user.resetPasswordExpire = Date.now() + 15 * 60 * 1000; // 15 minutes
+  await user.save();
+
+  const clientUrl = process.env.CLIENT_URL || 'http://localhost:5173';
+  const resetUrl = `${clientUrl}/reset-password?token=${resetToken}`;
+
+  try {
+    await sendPasswordResetEmail({ email: user.email, resetUrl });
+    res.status(200).json({ success: true, message: 'Password reset link sent to your email' });
+  } catch (err) {
+    user.resetPasswordToken = undefined;
+    user.resetPasswordExpire = undefined;
+    await user.save();
+    res.status(500).json({ success: false, message: 'Email could not be sent. Please try again.' });
+  }
+});
+
+// @desc    Reset password using token
+// @route   POST /api/auth/reset-password
+// @access  Public
+export const resetPassword = asyncHandler(async (req, res) => {
+  const { token, password } = req.body;
+  if (!token || !password) return res.status(400).json({ success: false, message: 'Token and password are required' });
+  if (password.length < 6) return res.status(400).json({ success: false, message: 'Password must be at least 6 characters' });
+
+  const hashedToken = crypto.createHash('sha256').update(token).digest('hex');
+  const user = await User.findOne({
+    resetPasswordToken: hashedToken,
+    resetPasswordExpire: { $gt: Date.now() }
+  });
+
+  if (!user) return res.status(400).json({ success: false, message: 'Invalid or expired reset link. Please request a new one.' });
+
+  user.password = await hashPassword(password);
+  user.resetPasswordToken = undefined;
+  user.resetPasswordExpire = undefined;
+  await user.save();
+
+  res.status(200).json({ success: true, message: 'Password reset successful. You can now login.' });
 });

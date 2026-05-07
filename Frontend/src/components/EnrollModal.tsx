@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { X } from "lucide-react";
 import toast from "react-hot-toast";
+import PaymentSuccessModal from "./PaymentSuccessModal";
 // @ts-ignore
 import { courseService } from "../services/courseService";
 // @ts-ignore
@@ -30,6 +31,8 @@ function EnrollModal({ isOpen, onClose, courseName }: EnrollModalProps) {
   const [loading, setLoading] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [formData, setFormData] = useState({ name: "", email: "", phone: "", message: "" });
+  const [paymentSuccess, setPaymentSuccess] = useState(false);
+  const [paidCourseName, setPaidCourseName] = useState("");
 
   useEffect(() => { if (isOpen) fetchCourses(); }, [isOpen]);
 
@@ -89,10 +92,11 @@ function EnrollModal({ isOpen, onClose, courseName }: EnrollModalProps) {
               message: formData.message,
               amount
             });
-            toast.success("Payment successful! Enrollment confirmed.");
+            setPaidCourseName(selectedCourse.title || selectedCourse.name || "");
             setFormData({ name: "", email: "", phone: "", message: "" });
             setSelectedCourse(null);
             onClose();
+            setPaymentSuccess(true);
           } catch {
             toast.error("Payment done but enrollment failed. Please contact support.");
           }
@@ -112,6 +116,8 @@ function EnrollModal({ isOpen, onClose, courseName }: EnrollModalProps) {
   };
 
   return (
+    <>
+      <PaymentSuccessModal isOpen={paymentSuccess} onClose={() => setPaymentSuccess(false)} courseName={paidCourseName} />
     <AnimatePresence>
       {isOpen && (
         <>
@@ -208,6 +214,7 @@ function EnrollModal({ isOpen, onClose, courseName }: EnrollModalProps) {
         </>
       )}
     </AnimatePresence>
+    </>
   );
 }
 

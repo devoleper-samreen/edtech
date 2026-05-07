@@ -1,9 +1,12 @@
 import { User, Mail, GraduationCap, Star, ChevronLeft, ChevronRight, X, Quote, IndianRupee } from "lucide-react";
 import { useRef, useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+// @ts-ignore
+import { useAuth } from "../context/AuthContext";
 import { motion, AnimatePresence } from "framer-motion";
 import toast from "react-hot-toast";
 import Header from "../components/Header";
+import PaymentSuccessModal from "../components/PaymentSuccessModal";
 import Footer from "../components/Footer";
 import CallbackModal from "../components/CallbackModal";
 import HiringPartners from "../components/HiringPartners";
@@ -17,7 +20,6 @@ import { internshipService } from "../services/internshipService";
 import api from "../services/../config/api";
 import { testimonialService } from "../services/testimonialService";
 
-type TabType = "general" | "corporate" | "hire";
 
 // Feature Icons
 const TailoredIcon = () => (
@@ -82,13 +84,15 @@ interface Testimonial {
 
 function CorporateTraining() {
   const navigate = useNavigate();
+  const { user } = useAuth();
   const sliderRef = useRef<HTMLDivElement>(null);
   //const [openFaqIndex, setOpenFaqIndex] = useState<number | null>(null);
   const [isCallbackOpen, setIsCallbackOpen] = useState(false);
-  const [callbackDefaultTab] = useState<TabType>("corporate");
   const [enrollProgram, setEnrollProgram] = useState<any>(null);
   const [enrollForm, setEnrollForm] = useState({ name: "", email: "", phone: "" });
   const [enrollSubmitting, setEnrollSubmitting] = useState(false);
+  const [paymentSuccess, setPaymentSuccess] = useState(false);
+  const [paidCourseName, setPaidCourseName] = useState("");
   const [selectedTestimonial, setSelectedTestimonial] = useState<Testimonial | null>(null);
   const [programs, setPrograms] = useState<any[]>([]);
   const [programsLoading, setProgramsLoading] = useState(true);
@@ -160,9 +164,10 @@ function CorporateTraining() {
               phone: `+91${enrollForm.phone}`, course: enrollProgram.title,
               internshipId: enrollProgram._id, amount
             });
-            toast.success("Payment successful! Enrollment confirmed.");
+            setPaidCourseName(enrollProgram.title);
             setEnrollProgram(null);
             setEnrollForm({ name: "", email: "", phone: "" });
+            setPaymentSuccess(true);
           } catch { toast.error("Payment done but enrollment failed. Please contact support."); }
         },
         prefill: { name: enrollForm.name, email: enrollForm.email, contact: `+91${enrollForm.phone}` },
@@ -221,7 +226,7 @@ function CorporateTraining() {
         message: formData.message.trim()
       });
 
-      toast.success("Request submitted successfully! Redirecting to payment...");
+      toast.success("Request submitted successfully! We will contact you soon.");
       setFormData({
         name: "",
         email: "",
@@ -229,7 +234,6 @@ function CorporateTraining() {
         requiredTraining: "",
         message: ""
       });
-      window.open("https://rzp.io/rzp/rBt2q7M", "_blank");
     } catch (error) {
       console.error("Error submitting form:", error);
       toast.error("Failed to submit request. Please try again.");
@@ -288,6 +292,7 @@ function CorporateTraining() {
 
   return (
     <div>
+      <PaymentSuccessModal isOpen={paymentSuccess} onClose={() => setPaymentSuccess(false)} courseName={paidCourseName} />
       <Header />
 
       {/* HERO SECTION */}
@@ -410,6 +415,67 @@ function CorporateTraining() {
               </form>
             </motion.div>
           </div>
+        </div>
+      </section>
+
+      {/* Internship Programs Section */}
+      <section className="w-full py-16 bg-white">
+        <h2 className="text-3xl md:text-4xl font-bold text-center text-gray-800 mb-12">
+          Internship Programs
+        </h2>
+
+        <div className="w-full max-w-[1600px] mx-auto px-6">
+          {programsLoading ? (
+            <div className="flex flex-col items-center justify-center py-12">
+              <div className="w-10 h-10 border-4 border-[#FA8128] border-t-transparent rounded-full animate-spin"></div>
+              <p className="mt-3 text-gray-500 text-sm">Loading programs...</p>
+            </div>
+          ) : programs.length === 0 ? (
+            <div className="flex flex-col items-center justify-center py-12 text-center">
+              <GraduationCap size={48} className="text-gray-300 mb-3" />
+              <p className="text-gray-500 text-sm">No programs available at the moment.</p>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+              {programs.map((program) => (
+                <div
+                  key={program._id}
+                  className="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-lg transition-shadow"
+                >
+                  <div className={`h-40 relative overflow-hidden ${program.thumbnail ? 'bg-white' : 'bg-gradient-to-br from-orange-400 to-orange-600'}`}>
+                    {program.thumbnail ? (
+                      <img
+                        src={program.thumbnail}
+                        alt={program.title}
+                        className="w-full h-full object-contain"
+                        onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
+                      />
+                    ) : (
+                      <div className="absolute inset-0 flex items-center justify-center">
+                        <GraduationCap size={48} className="text-white/50" />
+                      </div>
+                    )}
+                  </div>
+                  <div className="p-4">
+                    <h3 className="font-bold text-gray-800 mb-1 text-sm leading-tight line-clamp-2">{program.title}</h3>
+                    <p className="text-gray-500 text-xs mb-2 leading-relaxed line-clamp-2">{program.description}</p>
+                    <div className="flex items-center justify-between mb-3">
+                      {program.duration && <span className="text-xs text-[#FA8128] font-medium">{program.duration}</span>}
+                    </div>
+                    {program.price > 0 && <p className="text-sm font-bold text-gray-800 mb-3">₹{program.price.toLocaleString('en-IN')}</p>}
+                    <div className="flex gap-2">
+                      <button onClick={() => { if (!user) { toast.error("Please login to enroll"); navigate("/login"); return; } setEnrollProgram(program); }} className="flex-1 bg-[#FA8128] hover:bg-orange-600 text-white text-xs font-medium py-2 px-3 rounded-md transition-colors">
+                        Enroll Now
+                      </button>
+                      <button onClick={() => navigate(`/internship/${program._id}`)} className="flex-1 border border-[#FA8128] text-[#FA8128] hover:bg-orange-50 text-xs font-medium py-2 px-3 rounded-md transition-colors">
+                        Know More
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
       </section>
 
@@ -600,67 +666,6 @@ function CorporateTraining() {
               These collaborations enable real problem statements, project mentorship, and hiring opportunities for participants.
             </p>
           </motion.div>
-        </div>
-      </section>
-
-      {/* Internship Programs Section */}
-      <section className="w-full py-16 bg-white">
-        <h2 className="text-3xl md:text-4xl font-bold text-center text-gray-800 mb-12">
-          Internship Programs
-        </h2>
-
-        <div className="w-full max-w-[1600px] mx-auto px-6">
-          {programsLoading ? (
-            <div className="flex flex-col items-center justify-center py-12">
-              <div className="w-10 h-10 border-4 border-[#FA8128] border-t-transparent rounded-full animate-spin"></div>
-              <p className="mt-3 text-gray-500 text-sm">Loading programs...</p>
-            </div>
-          ) : programs.length === 0 ? (
-            <div className="flex flex-col items-center justify-center py-12 text-center">
-              <GraduationCap size={48} className="text-gray-300 mb-3" />
-              <p className="text-gray-500 text-sm">No programs available at the moment.</p>
-            </div>
-          ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-              {programs.map((program) => (
-                <div
-                  key={program._id}
-                  className="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-lg transition-shadow"
-                >
-                  <div className={`h-40 relative overflow-hidden ${program.thumbnail ? 'bg-white' : 'bg-gradient-to-br from-orange-400 to-orange-600'}`}>
-                    {program.thumbnail ? (
-                      <img
-                        src={program.thumbnail}
-                        alt={program.title}
-                        className="w-full h-full object-contain"
-                        onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
-                      />
-                    ) : (
-                      <div className="absolute inset-0 flex items-center justify-center">
-                        <GraduationCap size={48} className="text-white/50" />
-                      </div>
-                    )}
-                  </div>
-                  <div className="p-4">
-                    <h3 className="font-bold text-gray-800 mb-1 text-sm leading-tight line-clamp-2">{program.title}</h3>
-                    <p className="text-gray-500 text-xs mb-2 leading-relaxed line-clamp-2">{program.description}</p>
-                    <div className="flex items-center justify-between mb-3">
-                      {program.duration && <span className="text-xs text-[#FA8128] font-medium">{program.duration}</span>}
-                    </div>
-                    {program.price > 0 && <p className="text-sm font-bold text-gray-800 mb-3">₹{program.price.toLocaleString('en-IN')}</p>}
-                    <div className="flex gap-2">
-                      <button onClick={() => setEnrollProgram(program)} className="flex-1 bg-[#FA8128] hover:bg-orange-600 text-white text-xs font-medium py-2 px-3 rounded-md transition-colors">
-                        Enroll Now
-                      </button>
-                      <button onClick={() => navigate(`/internship/${program._id}`)} className="flex-1 border border-[#FA8128] text-[#FA8128] hover:bg-orange-50 text-xs font-medium py-2 px-3 rounded-md transition-colors">
-                        Know More
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
         </div>
       </section>
 
@@ -887,11 +892,9 @@ function CorporateTraining() {
       <Footer />
       <CallbackModal />
 
-      {/* Callback Modal with Corporate Training tab */}
       <CallbackModal
         isOpen={isCallbackOpen}
         onClose={() => setIsCallbackOpen(false)}
-        defaultTab={callbackDefaultTab}
       />
 
       {/* Enrollment Payment Modal */}
