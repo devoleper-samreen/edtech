@@ -1,3 +1,4 @@
+import { Helmet } from "react-helmet-async";
 import { useState } from "react";
 import { motion } from "framer-motion";
 import Header from "../components/Header";
@@ -79,6 +80,11 @@ function ContactUs() {
 
   return (
     <div>
+      <Helmet>
+        <title>Contact Us | TechFox Bangalore</title>
+        <meta name="description" content="Get in touch with TechFox. Contact us for course enquiries, admissions and corporate training. Located in JP Nagar, Bangalore." />
+        <link rel="canonical" href="https://www.techfox.co/contact-us" />
+      </Helmet>
       <Header />
 
       {/* Hero Section with Form */}

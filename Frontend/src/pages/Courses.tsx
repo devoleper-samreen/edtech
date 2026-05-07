@@ -1,3 +1,4 @@
+import { Helmet } from "react-helmet-async";
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
@@ -103,6 +104,11 @@ function Courses() {
 
   return (
     <div>
+      <Helmet>
+        <title>All Courses | TechFox - Software Training Bangalore</title>
+        <meta name="description" content="Browse all software courses at TechFox — DevOps, Python, Java, Testing, Full Stack and more. Expert-led training in Bangalore." />
+        <link rel="canonical" href="https://www.techfox.co/courses" />
+      </Helmet>
       <Header />
 
       {/* Hero Section */}

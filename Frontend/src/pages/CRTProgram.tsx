@@ -1,3 +1,4 @@
+import { Helmet } from "react-helmet-async";
 import { useState } from "react";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
@@ -206,6 +207,11 @@ function CRTProgram() {
 
   return (
     <>
+      <Helmet>
+        <title>CRT Program | TechFox - Campus Recruitment Training Bangalore</title>
+        <meta name="description" content="TechFox CRT Program prepares students for campus placements with aptitude, technical and soft skills training. Get job-ready in Bangalore." />
+        <link rel="canonical" href="https://www.techfox.co/crt-program" />
+      </Helmet>
       <Header />
 
       {/* Hero */}

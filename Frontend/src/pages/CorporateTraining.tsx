@@ -1,3 +1,4 @@
+import { Helmet } from "react-helmet-async";
 import { User, Mail, GraduationCap, Star, ChevronLeft, ChevronRight, X, Quote, IndianRupee } from "lucide-react";
 import { useRef, useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
@@ -292,6 +293,11 @@ function CorporateTraining() {
 
   return (
     <div>
+      <Helmet>
+        <title>Summer Internship Program | TechFox Bangalore</title>
+        <meta name="description" content="Join TechFox's expert-led Summer Internship Program in Bangalore. Gain real-world experience, industry exposure and job-ready skills." />
+        <link rel="canonical" href="https://www.techfox.co/summer-internship" />
+      </Helmet>
       <PaymentSuccessModal isOpen={paymentSuccess} onClose={() => setPaymentSuccess(false)} courseName={paidCourseName} />
       <Header />
 

@@ -1,3 +1,4 @@
+import { Helmet } from "react-helmet-async";
 import { User, Mail, Phone, Building2, X, Quote, Star } from "lucide-react";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
@@ -108,6 +109,11 @@ function HireFromUs() {
 
   return (
     <div>
+      <Helmet>
+        <title>Hire From Us | TechFox - Skilled Software Candidates</title>
+        <meta name="description" content="Hire job-ready software professionals from TechFox. Access skilled candidates trained in DevOps, Python, Java, Testing and more from Bangalore." />
+        <link rel="canonical" href="https://www.techfox.co/hire-from-us" />
+      </Helmet>
       <Header />
 
       {/* HERO SECTION */}

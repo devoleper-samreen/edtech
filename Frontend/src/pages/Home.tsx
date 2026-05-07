@@ -1,3 +1,4 @@
+import { Helmet } from "react-helmet-async";
 import Header from '../components/Header'
 import Hero from '../components/Hero'
 import InternshipFeatures from '../components/InternshipFeatures'
@@ -12,6 +13,11 @@ import CallbackModal from '../components/CallbackModal'
 function Home() {
   return (
     <div className="overflow-x-hidden">
+      <Helmet>
+        <title>TechFox - Learn From Industry Experts | Bangalore</title>
+        <meta name="description" content="TechFox offers industry-led software training, summer internships and CRT programs in Bangalore. Learn DevOps, Python, Java, Testing & more." />
+        <link rel="canonical" href="https://www.techfox.co/" />
+      </Helmet>
       <Header />
       <Hero />
       <InternshipFeatures />
