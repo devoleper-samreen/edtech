@@ -51,6 +51,8 @@ interface CourseData {
   whoIsFor?: string[];
   whyTake?: string[];
   whatLearn?: string[];
+  price?: number;
+  duration?: string;
   category?: {
     _id: string;
     name: string;
@@ -214,10 +216,35 @@ function CourseDetails() {
               </div>
 
               {/* Description */}
-              <p className="text-gray-600 leading-relaxed mb-6">
+              <p className="text-gray-600 leading-relaxed mb-4">
                 {courseDescription}
               </p>
 
+              {/* Duration & Price */}
+              {(course.duration || course.price !== undefined) && (
+                <div className="flex flex-wrap gap-3 mb-6">
+                  {course.duration && (
+                    <div className="flex items-center gap-2 bg-white border border-orange-100 rounded-lg px-4 py-2.5 shadow-sm">
+                      <Calendar size={16} className="text-[#FA8128]" />
+                      <div>
+                        <p className="text-[10px] text-gray-400 font-medium uppercase tracking-wide">Duration</p>
+                        <p className="text-sm font-semibold text-gray-800">{course.duration}</p>
+                      </div>
+                    </div>
+                  )}
+                  {course.price !== undefined && (
+                    <div className="flex items-center gap-2 bg-white border border-orange-100 rounded-lg px-4 py-2.5 shadow-sm">
+                      <span className="text-[#FA8128] font-bold text-base">₹</span>
+                      <div>
+                        <p className="text-[10px] text-gray-400 font-medium uppercase tracking-wide">Course Fee</p>
+                        <p className="text-sm font-semibold text-gray-800">
+                          {course.price === 0 ? "Free" : `₹${course.price.toLocaleString('en-IN')}`}
+                        </p>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )}
 
               {/* Highlights */}
               <div className="space-y-3 mb-6">
