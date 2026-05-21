@@ -9,7 +9,7 @@ export const sendEnrollmentEmail = async ({ name, email, phone, course, message 
   console.error('[EMAIL] sendEnrollmentEmail called, admin:', adminEmail());
 
   await getResend().emails.send({
-    from: 'TechFox <onboarding@resend.dev>',
+    from: 'TechFox <team@techfox.co>',
     to: adminEmail(),
     subject: `New Enrollment Request – ${course}`,
     html: `
@@ -44,7 +44,7 @@ export const sendEnquiryEmail = async ({ name, email, phone, course, message }) 
   console.error('[EMAIL] sendEnquiryEmail called, admin:', adminEmail());
 
   await getResend().emails.send({
-    from: 'TechFox <onboarding@resend.dev>',
+    from: 'TechFox <team@techfox.co>',
     to: adminEmail(),
     subject: `New Enquiry – ${course}`,
     html: `
@@ -79,7 +79,7 @@ export const sendCallbackEmail = async ({ name, email, phone, type, company, req
   console.error('[EMAIL] sendCallbackEmail called, admin:', adminEmail());
 
   await getResend().emails.send({
-    from: 'TechFox <onboarding@resend.dev>',
+    from: 'TechFox <team@techfox.co>',
     to: adminEmail(),
     subject: `New Callback Request – ${type || 'General'}`,
     html: `
@@ -114,7 +114,7 @@ export const sendCallbackEmail = async ({ name, email, phone, type, company, req
 // Password reset email — sent to user
 export const sendPasswordResetEmail = async ({ email, resetUrl }) => {
   await getResend().emails.send({
-    from: 'TechFox <onboarding@resend.dev>',
+    from: 'TechFox <team@techfox.co>',
     to: email,
     subject: 'Reset Your TechFox Password',
     html: `
